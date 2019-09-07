@@ -11,24 +11,13 @@ import {
 import immutableStateInvariantMiddleware from "redux-immutable-state-invariant"
 import { createSerializableStateInvariantMiddleware } from "redux-starter-kit"
 import thunkMiddleWare from "redux-thunk"
-import { todoAppAsyncReducer, TodoAppAsyncState } from "./todoAppAsync"
-import { todoAppOldReduxReducer, TodoAppOldReduxState } from "./todoAppOldRedux"
-import { todoAppReDucksReducer, TodoAppReDucksState } from "./todoAppReDucks"
 
-export type RootState = Readonly<{
-  todoAppOldRedux: TodoAppOldReduxState
-  todoAppReDucks: TodoAppReDucksState
-  todoAppAsync: TodoAppAsyncState
-}>
+export type RootState = Readonly<{}>
 
 export const configureStore = (
   initialState: DeepPartial<RootState> = {}
 ): Store<RootState, AnyAction> => {
-  const rootReducer = combineReducers<RootState>({
-    todoAppOldRedux: todoAppOldReduxReducer,
-    todoAppReDucks: todoAppReDucksReducer,
-    todoAppAsync: todoAppAsyncReducer,
-  })
+  const rootReducer = combineReducers<RootState>({})
 
   // Connect Chrome Redux DevTools, if installed.
   const composeEnhancers =

@@ -18,12 +18,6 @@ export type Brand<K, T> = K & { __brand: T }
 export type FixMeAny = any
 
 /**
- * 修正しなくてよい any
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type AllowedAny = any
-
-/**
  * cast のために使う、修正しなくてよい any
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

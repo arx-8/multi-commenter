@@ -1,6 +1,5 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import logo from "assets/logo.svg"
 import React from "react"
 
 type OwnProps = {
@@ -11,7 +10,6 @@ export const Root: React.FC<OwnProps> = () => {
   return (
     <div css={root}>
       <header css={header}>
-        <img css={logoCss} src={logo} alt="logo" />
         <p>Hello React</p>
         <a
           css={link}
@@ -39,21 +37,6 @@ const header = css`
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
-`
-
-const logoCss = css`
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none;
-
-  @keyframes App-logo-spin {
-    from {
-      transform: rotate(0deg);
-    }
-    to {
-      transform: rotate(360deg);
-    }
-  }
 `
 
 const link = css`
