@@ -9,12 +9,12 @@ jobs:
       # @see https://circleci.com/docs/2.0/caching/#source-caching
       - restore_cache:
           keys:
-            - source-v1-{{ .Branch }}-{{ .Revision }}
-            - source-v1-{{ .Branch }}-
+            - source-v1-{{ .Revision }}
+            # fallback to using the latest cache if no exact match is found
             - source-v1-
       - checkout
       - save_cache:
-          key: source-v1-{{ .Branch }}-{{ .Revision }}
+          key: source-v1-{{ .Revision }}
           paths:
             - .git
 
@@ -22,14 +22,14 @@ jobs:
       - restore_cache:
           keys:
             # when lock file changes, use increasingly general patterns to restore cache
-            - node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
-            - node-v1-{{ .Branch }}-
+            - node-v1-{{ checksum "package-lock.json" }}
+            # fallback to using the latest cache if no exact match is found
             - node-v1-
       - run: npm ci
       - save_cache:
           paths:
             - ~/usr/local/lib/node_modules # location depends on npm version
-          key: node-v1-{{ .Branch }}-{{ checksum "package-lock.json" }}
+          key: node-v1-{{ checksum "package-lock.json" }}
 
       - run:
           name: lint
