@@ -2,52 +2,9 @@
 
 * * *
 
-# re-ducks example
+# multi-commenter
 
-I think `re-ducks` is the best design of React state management.<br>
-This project is an example of the history leading to `re-ducks`.<br>
-(Not completely the same as the official `re-ducks`. I arranged that a little.)
-
-For comparison, Implement several patterns.<br>
-These are history of React state management design in 2019.
-
-## Stack
-
-| Live demo                                                                                       | State management                                         |
-| ----------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| 1. [TodoApp (Old plain state)](https://re-ducks-example.netlify.com/#/todo-app-old-plain-state) | React state (class component)                            |
-| 2. [TodoApp (Plain state)](https://re-ducks-example.netlify.com/#/todo-app-plain-state)         | React state (React Hooks)                                |
-| 3. [TodoApp (Old design redux)](https://re-ducks-example.netlify.com/#/todo-app-old-redux)      | Redux (Directly dispatch)                                |
-| 4. [TodoApp (re-ducks)](https://re-ducks-example.netlify.com/#/todo-app-re-ducks)               | Redux (re-ducks)                                         |
-| 5. [TodoApp (re-ducks + async)](https://re-ducks-example.netlify.com/#/todo-app-async)          | Redux (re-ducks) + async (**_Sounds good & Recommend_**) |
-
-### Inspired design patterns
-
-- [ducks](https://github.com/erikras/ducks-modular-redux)
-- [re-ducks](https://github.com/alexnm/re-ducks)
-- [Atomic Design](https://patternlab.io/)
-- [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
-- [Presentational and Container Components - Dan Abramov - Medium](https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0)
-- [The Case For Colocating Tests in React - Connor Elsea - Medium](https://medium.com/@Connorelsea/the-case-for-colocating-tests-in-react-cef6ea7b4a1a)
-
-### Package structure
-
-| Package             | Overview                                                                                     |
-| ------------------- | -------------------------------------------------------------------------------------------- |
-| \_\_tests\_\_/      | Shared code for UnitTest. Place product's UnitTest code as `Colocating Tests`.               |
-| assets/             | logo, svg etc.                                                                               |
-| components/         | React Components based on `Atomic Design`. And `Presentation-Layer` of `Clean Architecture`. |
-| components/helpers/ | No `Atomic Design`, But React Component. (e.g. Routing component)                            |
-| components/styles/  | Shared styles.                                                                               |
-| constants/          | Constants. (e.g. App settings, Messages)                                                     |
-| data/               | `Data-layer` of `Clean Architecture`.                                                        |
-| domain/             | `Domain-layer` of `Clean Architecture`.                                                      |
-| store/              | Redux state.                                                                                 |
-| types/              | Project specific types.                                                                      |
-| utils/              | General utils.                                                                               |
-| index.tsx           | Entry point.                                                                                 |
-| react-app-env.d.ts  | Create-react-app auto generated file.                                                        |
-| serviceWorker.ts    | Create-react-app auto generated file for PWA.                                                |
+WIP
 
 ## Quick Start
 
