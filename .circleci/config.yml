@@ -28,7 +28,8 @@ jobs:
       - run: npm ci
       - save_cache:
           paths:
-            - ~/usr/local/lib/node_modules # location depends on npm version
+            # https://docs.npmjs.com/cli/cache.html#cache
+            - ~/.npm
           key: node-v1-{{ checksum "package-lock.json" }}
 
       - run:
