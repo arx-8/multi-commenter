@@ -20,7 +20,13 @@ export const Root: React.FC<OwnProps> = () => {
       </div>
 
       <div>
-        <input type="text" />
+        <input type="text" value="url" />
+      </div>
+      <div>開く</div>
+      <div>閉じる</div>
+
+      <div>
+        <input type="text" value="投稿内容" />
       </div>
 
       <div>

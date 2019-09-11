@@ -8,7 +8,6 @@ import { FixMeAny } from "types/Utils"
 
 type Return = {
   disconnect: () => void
-  init: () => void
   isGoogleAuthorized: () => boolean
   signIn: () => Promise<gapi.auth2.GoogleUser>
   signOut: () => void
@@ -75,7 +74,6 @@ export const useGoogleAuth = (): Return => {
 
   return {
     disconnect,
-    init,
     isGoogleAuthorized: isAuthorized,
     signIn,
     signOut,
