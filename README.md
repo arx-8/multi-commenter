@@ -10,8 +10,13 @@ WIP
 
 ```sh
 npm i
-npm start
+PORT=80 npm start
 ```
+
+### Note
+
+- The reason for using `PORT 80` is for Twitter OAuth in development.
+  - Any port number is not allowed in Twitter OAuth callback url.
 
 ## Available DevTools
 
