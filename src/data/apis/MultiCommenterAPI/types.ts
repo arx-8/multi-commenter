@@ -1,7 +1,7 @@
-export type Req = {
+export type CreateAuthenticateUrlRequestParams = {
   callback_url: string
 }
 
-export type Res = {
+export type CreateAuthenticateUrlResponse = {
   authenticate_url: string
 }

@@ -33,13 +33,14 @@ export type ActionCreatorWithPayload<T, P> = (
  *
  * ThunkAction の <R> を void | Promise<void> に制約してる理由は、実装の複雑化を避けるため。
  * 「Promise.resolve の結果を受け取って Component 側でロジックを実装」することを防ぐ。
- * 基本的に、return の Promise すら使うべきではないため、型引数省略時のデフォルト値は void としている。
+ * 基本的に、Thunk を使う Action は非同期処理 (return Promise<*>) の場合が多いため、デフォルトの型引数は Promise<void> としている。
+ * 同期的な ThunkAction の場合は、明示的に型引数を指定すること。
  *
  * @template TReturn Type of return
  * @template TAction Type of acceptable action
  */
 export type AppThunkAction<
-  TReturn extends void | Promise<void> = void,
+  TReturn extends void | Promise<void> = Promise<void>,
   TAction extends Action = AnyAction
 > = ThunkAction<TReturn, RootState, void, TAction>
 

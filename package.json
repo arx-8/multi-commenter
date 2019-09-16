@@ -21,7 +21,9 @@
     "redux-immutable-state-invariant": "2.1.0",
     "redux-starter-kit": "0.7.0",
     "redux-thunk": "2.3.0",
-    "ulid": "2.3.0"
+    "typescript-fsa": "3.0.0",
+    "ulid": "2.3.0",
+    "use-react-router": "1.0.7"
   },
   "devDependencies": {
     "@types/gapi": "0.0.39",
