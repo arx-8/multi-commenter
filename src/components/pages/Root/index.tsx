@@ -7,6 +7,7 @@ import { RoutePath } from "constants/RoutePaths"
 import React from "react"
 import useReactRouter from "use-react-router"
 import { TwitterOAuthCallbackQueryParams } from "domain/models/Twitter"
+import { createAuthenticateUrl } from "data/apis/MultiCommenterAPI"
 
 type OwnProps = {
   children?: never
@@ -55,7 +56,15 @@ export const Root: React.FC<OwnProps> = () => {
       </div>
 
       <div>
-        <Button variant="contained" color="primary">
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            createAuthenticateUrl({
+              callback_url: "https://localhost",
+            })
+          }}
+        >
           投稿
           <SendIcon />
         </Button>

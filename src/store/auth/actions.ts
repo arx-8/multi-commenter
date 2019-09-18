@@ -12,5 +12,6 @@ export const ActionTypes = {
 }
 
 const create = actionCreatorFactory(APP_NAME)
+console.log(create)
 
 // export const login = create(ActionTypes.LOGIN)
