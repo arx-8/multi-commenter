@@ -1,5 +1,6 @@
 // import produce from "immer"
 import { Reducer } from "redux"
+import { FixMeAny } from "types/Utils"
 // import * as actions from "./actions"
 // import { ActionTypes } from "./actions"
 
@@ -7,7 +8,7 @@ export type State = Readonly<{}>
 
 export const initialState: State = {}
 
-type Action = ReturnType<any>
+type Action = ReturnType<FixMeAny>
 
 export const reducer: Reducer<State, Action> = (
   state = initialState,
