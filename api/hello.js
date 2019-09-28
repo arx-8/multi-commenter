@@ -1,5 +1,5 @@
 // @ts-check
-import produce from "immer"
+// import produce from "immer"
 
 /**
  * @param {import("aws-lambda").APIGatewayEvent} event
@@ -8,11 +8,16 @@ import produce from "immer"
 // eslint-disable-next-line @typescript-eslint/require-await
 export async function handler(event, context) {
   // console.log(event, context)
-  console.log(produce)
+  // console.log(produce)
   console.log("--------------------------------------")
 
   return {
     statusCode: 200,
+    headers: {
+      "content-type": "application/json",
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT",
+    },
     body: JSON.stringify({
       message: `Hello world ${Math.floor(Math.random() * 10)}`,
     }),
