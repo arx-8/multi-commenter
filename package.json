@@ -26,6 +26,7 @@
     "use-react-router": "1.0.7"
   },
   "devDependencies": {
+    "@types/aws-lambda": "8.10.33",
     "@types/gapi": "0.0.39",
     "@types/gapi.auth2": "0.0.50",
     "@types/jest": "24.0.18",
@@ -39,6 +40,7 @@
     "eslint-plugin-jest": "22.17.0",
     "eslint-plugin-only-error": "1.0.2",
     "eslint-plugin-prettier": "3.1.0",
+    "netlify-lambda": "1.6.3",
     "npm-run-all": "4.1.5",
     "prettier": "1.18.2",
     "react-scripts": "3.1.1",
@@ -49,13 +51,16 @@
   "scripts": {
     "analyze:run": "source-map-explorer 'build/static/js/*.js' --html misc/source-map-explorer.html",
     "analyze": "npm-run-all --sequential build analyze:run",
-    "build": "react-scripts build",
+    "build:api": "netlify-lambda build api",
+    "build:frontend": "react-scripts build",
+    "build": "npm-run-all --parallel build:frontend build:api",
     "eslint-print-config": "eslint --print-config src > misc/eslint-print-config.json",
     "lint:eslint-dry": "eslint -c .eslintrc.js --ext .ts,.tsx src",
     "lint:eslint": "eslint -c .eslintrc.js --fix --ext .ts,.tsx src",
     "lint:tsc": "tsc --noEmit",
     "lint-dry": "npm-run-all --parallel --continue-on-error lint:eslint-dry lint:tsc",
     "lint": "npm-run-all --parallel --continue-on-error lint:eslint lint:tsc",
+    "start:api": "netlify-lambda serve api",
     "start": "react-scripts start",
     "test": "react-scripts test",
     "typesync": "typesync --ignoredeps=dev"

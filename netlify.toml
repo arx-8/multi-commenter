@@ -1,0 +1,3 @@
+[build]
+    command = "npm run build:api"
+    functions = "dist/api"

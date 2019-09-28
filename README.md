@@ -10,13 +10,25 @@ WIP
 
 ```sh
 npm i
+```
+
+### Frontend
+
+```sh
 PORT=80 npm start
 ```
 
-### Note
+#### Note
 
 - The reason for using `PORT 80` is for Twitter OAuth in development.
   - Any port number is not allowed in Twitter OAuth callback url.
+
+### API
+
+```sh
+npm run start:api
+open http://localhost:9000/.netlify/functions/${ENDPOINT}
+```
 
 ## Available DevTools
 
