@@ -22,7 +22,7 @@
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noUnusedParameters": true,
-    "baseUrl": "src"
+    "baseUrl": "."
   },
   "include": [
     "src"

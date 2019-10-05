@@ -1,8 +1,8 @@
-import { NotFound } from "components/pages/NotFound"
-import { Root } from "components/pages/Root"
-import { RoutePath } from "constants/RoutePaths"
 import React from "react"
 import { Route, Switch } from "react-router-dom"
+import { NotFound } from "src/components/pages/NotFound"
+import { Root } from "src/components/pages/Root"
+import { RoutePath } from "src/constants/RoutePaths"
 
 type OwnProps = {
   children?: never

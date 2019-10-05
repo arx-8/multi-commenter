@@ -1,8 +1,8 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import { RoutePath } from "constants/RoutePaths"
 import React from "react"
 import { Link } from "react-router-dom"
+import { RoutePath } from "src/constants/RoutePaths"
 
 type OwnProps = {
   children?: never

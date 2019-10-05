@@ -1,4 +1,4 @@
-import { toUniq } from "utils/ArrayUtils"
+import { toUniq } from "src/utils/ArrayUtils"
 
 describe("ActionType", () => {
   it("No duplicate definition", () => {
