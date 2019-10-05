@@ -1,6 +1,6 @@
 import { Action, AnyAction } from "redux"
 import { ThunkAction, ThunkDispatch } from "redux-thunk"
-import { RootState } from "store/store"
+import { RootState } from "src/store/store"
 
 /**
  * Type utility for redux

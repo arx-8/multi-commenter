@@ -1,11 +1,11 @@
-import { Routes } from "components/helpers/Routes"
-import { GlobalStyles } from "components/styles/GlobalStyles"
 import React from "react"
 import ReactDOM from "react-dom"
 import { Provider as ReduxProvider } from "react-redux"
 import { HashRouter as Router } from "react-router-dom"
-import { unregister } from "serviceWorker"
-import { configureStore } from "store/store"
+import { Routes } from "src/components/helpers/Routes"
+import { GlobalStyles } from "src/components/styles/GlobalStyles"
+import { unregister } from "src/serviceWorker"
+import { configureStore } from "src/store/store"
 
 const reduxStore = configureStore(window.__REDUX_INITIAL_STATE__)
 
