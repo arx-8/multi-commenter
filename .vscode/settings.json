@@ -1,13 +1,14 @@
 {
   "files.eol": "\n",
   "files.encoding": "utf8",
+  "typescript.tsdk": "node_modules/typescript/lib",
 
   // To prevent misdetection of indent size
   "[typescript]": {
-    "editor.tabSize": 2,
+    "editor.tabSize": 2
   },
   "[typescriptreact]": {
-    "editor.tabSize": 2,
+    "editor.tabSize": 2
   },
 
   /**
