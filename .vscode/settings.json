@@ -1,6 +1,9 @@
 {
   "files.eol": "\n",
   "files.encoding": "utf8",
+
+  // パスが相対的に近い場合に相対パスが優先されてしまうため、絶対パスで統一する
+  "typescript.preferences.importModuleSpecifier": "non-relative",
   "typescript.tsdk": "node_modules/typescript/lib",
 
   // To prevent misdetection of indent size
