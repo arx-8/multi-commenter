@@ -11,7 +11,7 @@ export const createOAuthTokens = (
 ): Promise<CreateOAuthTokensResponse> => {
   return ky
     .post(
-      "http://multi-commenter-server2.netlify.com/.netlify/functions/oauth_tokens_create",
+      "https://multi-commenter-server2.netlify.com/.netlify/functions/oauth_tokens_create",
       {
         json: params,
       }
@@ -24,7 +24,7 @@ export const createAccessTokens = (
 ): Promise<CreateAccessTokensResponse> => {
   return ky
     .post(
-      "http://multi-commenter-server2.netlify.com/.netlify/functions/access_tokens_create",
+      "https://multi-commenter-server2.netlify.com/.netlify/functions/access_tokens_create",
       {
         json: params,
       }
