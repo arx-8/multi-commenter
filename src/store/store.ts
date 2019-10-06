@@ -18,6 +18,7 @@ import { createSerializableStateInvariantMiddleware } from "redux-starter-kit"
 import thunkMiddleWare from "redux-thunk"
 import { isDevelopment } from "src/constants/Env"
 import { authReducer, AuthState } from "src/store/auth"
+import persistState from "redux-localstorage"
 
 export const history = createBrowserHistory()
 
@@ -49,7 +50,7 @@ export const configureStore = (
   const store = createStore(
     rootReducer,
     initialState,
-    composeEnhancers(applyMiddleware(...middleWares))
+    composeEnhancers(applyMiddleware(...middleWares), persistState(["auth"]))
   )
   return store
 }
