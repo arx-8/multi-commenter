@@ -11,13 +11,18 @@ import immutableStateInvariantMiddleware from "redux-immutable-state-invariant"
 import { createSerializableStateInvariantMiddleware } from "redux-starter-kit"
 import thunkMiddleWare from "redux-thunk"
 import { isDevelopment } from "src/constants/Env"
+import { authReducer, AuthState } from "src/store/auth"
 
-export type RootState = Readonly<{}>
+export type RootState = Readonly<{
+  auth: AuthState
+}>
 
 export const configureStore = (
   initialState: DeepPartial<RootState> = {}
 ): Store<RootState, AnyAction> => {
-  const rootReducer = combineReducers<RootState>({})
+  const rootReducer = combineReducers<RootState>({
+    auth: authReducer,
+  })
 
   // Connect Chrome Redux DevTools, if installed.
   const composeEnhancers =
