@@ -1,7 +1,7 @@
 import React from "react"
 import ReactDOM from "react-dom"
 import { Provider as ReduxProvider } from "react-redux"
-import { HashRouter as Router } from "react-router-dom"
+import { BrowserRouter as Router } from "react-router-dom"
 import { Routes } from "src/components/helpers/Routes"
 import { GlobalStyles } from "src/components/styles/GlobalStyles"
 import { unregister } from "src/serviceWorker"
