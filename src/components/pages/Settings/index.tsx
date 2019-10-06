@@ -20,8 +20,14 @@ type OwnProps = {
 
 export const Settings: React.FC<OwnProps> = () => {
   const dispatch = useDispatch()
-  const isAuthorized = useSelector((state: RootState) =>
-    authSelectors.isAuthorized(state.auth)
+  const isAuthorizedTwitter = useSelector((state: RootState) =>
+    authSelectors.isAuthorizedTwitter(state.auth)
+  )
+  const isAuthorizedGoogle = useSelector(
+    (state: RootState) => state.auth.google.isAuthorized
+  )
+  const isAuthorizingGoogle = useSelector(
+    (state: RootState) => state.auth.ui.google.isAuthorizing
   )
   const history = useHistory()
 
@@ -47,12 +53,12 @@ export const Settings: React.FC<OwnProps> = () => {
           onClick={() => {
             dispatch(authOperations.twitterSignIn())
           }}
-          disabled={isAuthorized}
+          disabled={isAuthorizedTwitter}
         >
           Twitter連携認証
           <TwitterIcon />
         </Button>
-        {isAuthorized ? <LinkIcon /> : <LinkOffIcon />}
+        {isAuthorizedTwitter ? <LinkIcon /> : <LinkOffIcon />}
       </div>
 
       <div css={buttons}>
@@ -60,13 +66,14 @@ export const Settings: React.FC<OwnProps> = () => {
           variant="contained"
           color="default"
           onClick={() => {
-            console.log("TODO")
+            dispatch(authOperations.googleSignIn())
           }}
+          disabled={isAuthorizedGoogle || isAuthorizingGoogle}
         >
           YouTube連携認証
           <YouTubeIcon />
         </Button>
-        {Math.floor(Math.random() * 10) % 2 ? <LinkIcon /> : <LinkOffIcon />}
+        {isAuthorizedGoogle ? <LinkIcon /> : <LinkOffIcon />}
       </div>
 
       <div>
@@ -74,7 +81,8 @@ export const Settings: React.FC<OwnProps> = () => {
           variant="contained"
           color="secondary"
           onClick={() => {
-            console.log("TODO")
+            dispatch(authOperations.twitterSignOut())
+            dispatch(authOperations.googleSignOut())
           }}
         >
           連携解除
