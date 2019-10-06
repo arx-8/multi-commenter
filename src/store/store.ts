@@ -1,4 +1,10 @@
 import {
+  connectRouter,
+  routerMiddleware,
+  RouterState,
+} from "connected-react-router"
+import { createBrowserHistory } from "history"
+import {
   AnyAction,
   applyMiddleware,
   combineReducers,
@@ -13,8 +19,11 @@ import thunkMiddleWare from "redux-thunk"
 import { isDevelopment } from "src/constants/Env"
 import { authReducer, AuthState } from "src/store/auth"
 
+export const history = createBrowserHistory()
+
 export type RootState = Readonly<{
   auth: AuthState
+  router: RouterState
 }>
 
 export const configureStore = (
@@ -22,6 +31,7 @@ export const configureStore = (
 ): Store<RootState, AnyAction> => {
   const rootReducer = combineReducers<RootState>({
     auth: authReducer,
+    router: connectRouter(history),
   })
 
   // Connect Chrome Redux DevTools, if installed.
@@ -30,6 +40,7 @@ export const configureStore = (
 
   const middleWares = []
   middleWares.push(thunkMiddleWare)
+  middleWares.push(routerMiddleware(history))
   if (isDevelopment) {
     middleWares.push(immutableStateInvariantMiddleware())
     middleWares.push(createSerializableStateInvariantMiddleware())
