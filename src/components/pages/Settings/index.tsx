@@ -6,16 +6,19 @@ import DeleteIcon from "@material-ui/icons/Delete"
 import LinkIcon from "@material-ui/icons/Link"
 import LinkOffIcon from "@material-ui/icons/LinkOff"
 import React from "react"
+import { useDispatch } from "react-redux"
 import { useHistory } from "react-router"
 import { TwitterIcon } from "src/components/atoms/TwitterIcon"
 import { YouTubeIcon } from "src/components/atoms/YouTubeIcon"
 import { RoutePath } from "src/constants/RoutePaths"
+import { authOperations } from "src/store/auth"
 
 type OwnProps = {
   children?: never
 }
 
 export const Settings: React.FC<OwnProps> = () => {
+  const dispatch = useDispatch()
   const history = useHistory()
 
   return (
@@ -34,7 +37,13 @@ export const Settings: React.FC<OwnProps> = () => {
       </div>
 
       <div>
-        <Button variant="contained" color="default">
+        <Button
+          variant="contained"
+          color="default"
+          onClick={() => {
+            dispatch(authOperations.twitterSignIn())
+          }}
+        >
           Twitter連携認証
           <TwitterIcon />
         </Button>

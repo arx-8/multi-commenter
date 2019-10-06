@@ -1,29 +1,53 @@
-// import produce from "immer"
-import { Reducer } from "redux"
-// import * as actions from "./actions"
-// import { ActionTypes } from "./actions"
+import produce from "immer"
+import { Action, Reducer } from "redux"
+import { isType } from "typescript-fsa"
+import * as actions from "./actions"
 
-export type State = Readonly<{}>
+export type State = Readonly<{
+  twitter: {
+    isAuthorized: boolean
+  }
+  ui: {
+    twitter: {
+      isAuthorizing: boolean
+      errorMsg: string
+    }
+  }
+}>
 
-export const initialState: State = {}
-
-type Action = ReturnType<any>
+export const initialState: State = {
+  twitter: {
+    isAuthorized: false,
+  },
+  ui: {
+    twitter: {
+      isAuthorizing: false,
+      errorMsg: "",
+    },
+  },
+}
 
 export const reducer: Reducer<State, Action> = (
   state = initialState,
   action
 ) => {
-  switch (action.type) {
-    // case ActionTypes.ADD_TODO_STARTED:
-    //   return produce(state, (draft) => {
-    //     draft.isLoading.add = true
-    //   })
-
-    default: {
-      // case の定義忘れ防止のため
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      // const _: never = action
-      return state
-    }
+  if (isType(action, actions.twitterSignIn.started)) {
+    return produce(state, (draft) => {
+      draft.ui.twitter.isAuthorizing = true
+      draft.ui.twitter.errorMsg = ""
+    })
   }
+  if (isType(action, actions.twitterSignIn.done)) {
+    return produce(state, (draft) => {
+      draft.ui.twitter.isAuthorizing = false
+    })
+  }
+  if (isType(action, actions.twitterSignIn.failed)) {
+    return produce(state, (draft) => {
+      draft.ui.twitter.isAuthorizing = false
+      draft.ui.twitter.errorMsg = action.payload.error.message
+    })
+  }
+
+  return state
 }

@@ -13,6 +13,7 @@
     "connected-react-router": "6.5.2",
     "emotion-normalize": "10.1.0",
     "immer": "4.0.1",
+    "ky": "0.15.0",
     "react": "16.10.2",
     "react-dom": "16.10.2",
     "react-redux": "7.1.1",
