@@ -14,11 +14,11 @@ import {
   Store,
 } from "redux"
 import immutableStateInvariantMiddleware from "redux-immutable-state-invariant"
+import persistState from "redux-localstorage"
 import { createSerializableStateInvariantMiddleware } from "redux-starter-kit"
 import thunkMiddleWare from "redux-thunk"
 import { isDevelopment } from "src/constants/Env"
 import { authReducer, AuthState } from "src/store/auth"
-import persistState from "redux-localstorage"
 
 export const history = createBrowserHistory()
 

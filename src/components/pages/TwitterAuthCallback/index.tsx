@@ -2,12 +2,12 @@
 import { css, jsx } from "@emotion/core"
 import { parse } from "querystring"
 import React from "react"
+import { useDispatch } from "react-redux"
 import { useHistory, useLocation } from "react-router"
 import { RoutePath } from "src/constants/RoutePaths"
-import {
-  isTwitterOAuthCallbackAllowed,
-  isTwitterOAuthCallbackDenied,
-} from "src/domain/models/Twitter"
+import { TwitterOAuthCallbackQueryParams } from "src/domain/models/Twitter"
+import { authOperations } from "src/store/auth"
+import CircularProgress from "@material-ui/core/CircularProgress"
 
 type OwnProps = {
   children?: never
@@ -20,28 +20,29 @@ type OwnProps = {
 export const TwitterAuthCallback: React.FC<OwnProps> = () => {
   const history = useHistory()
   const location = useLocation()
+  const dispatch = useDispatch()
 
   // @see https://github.com/ljharb/qs/issues/177
-  const queryParams = parse(location.search.slice(1))
+  const queryParams = parse(
+    location.search.slice(1)
+  ) as TwitterOAuthCallbackQueryParams
 
-  if (isTwitterOAuthCallbackAllowed(queryParams)) {
-    // クエリパラメータを取り込み終わったら、クエリパラメータを消すため遷移
-    // 「戻る」ができると再度ここの処理が無駄に走るため、履歴は残さない
-
-    // TODO
-    console.log(queryParams)
-
-    history.replace(RoutePath.Root)
-  }
-
-  // 拒否された場合
-  if (isTwitterOAuthCallbackDenied(queryParams)) {
+  if ("oauth_verifier" in queryParams) {
+    dispatch(authOperations.twitterSignInFinalize(queryParams.oauth_verifier))
+  } else {
+    // 拒否された場合
     console.log("auth denied")
 
     history.replace(RoutePath.Settings)
   }
 
-  return <div css={root}>Loading</div>
+  return (
+    <div css={root}>
+      <CircularProgress />
+    </div>
+  )
 }
 
-const root = css``
+const root = css`
+  text-align: center;
+`

@@ -6,12 +6,13 @@ import DeleteIcon from "@material-ui/icons/Delete"
 import LinkIcon from "@material-ui/icons/Link"
 import LinkOffIcon from "@material-ui/icons/LinkOff"
 import React from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router"
 import { TwitterIcon } from "src/components/atoms/TwitterIcon"
 import { YouTubeIcon } from "src/components/atoms/YouTubeIcon"
 import { RoutePath } from "src/constants/RoutePaths"
-import { authOperations } from "src/store/auth"
+import { authOperations, authSelectors } from "src/store/auth"
+import { RootState } from "src/store/store"
 
 type OwnProps = {
   children?: never
@@ -19,6 +20,9 @@ type OwnProps = {
 
 export const Settings: React.FC<OwnProps> = () => {
   const dispatch = useDispatch()
+  const isAuthorized = useSelector((state: RootState) =>
+    authSelectors.isAuthorized(state.auth)
+  )
   const history = useHistory()
 
   return (
@@ -36,20 +40,22 @@ export const Settings: React.FC<OwnProps> = () => {
         </Button>
       </div>
 
-      <div>
+      <div css={buttons}>
         <Button
           variant="contained"
           color="default"
           onClick={() => {
             dispatch(authOperations.twitterSignIn())
           }}
+          disabled={isAuthorized}
         >
           Twitter連携認証
           <TwitterIcon />
         </Button>
+        {isAuthorized ? <LinkIcon /> : <LinkOffIcon />}
       </div>
 
-      <div>
+      <div css={buttons}>
         <Button
           variant="contained"
           color="default"
@@ -80,3 +86,8 @@ export const Settings: React.FC<OwnProps> = () => {
 }
 
 const root = css``
+
+const buttons = css`
+  display: flex;
+  align-items: center;
+`
