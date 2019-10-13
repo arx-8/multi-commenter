@@ -5,8 +5,9 @@ import BuildIcon from "@material-ui/icons/Build"
 import SendIcon from "@material-ui/icons/Send"
 import React from "react"
 import { useHistory } from "react-router"
-import { RoutePath } from "src/constants/RoutePaths"
+import { InputPost } from "src/components/organisms/InputPost"
 import { InputUrl } from "src/components/organisms/InputUrl"
+import { RoutePath } from "src/constants/RoutePaths"
 
 type OwnProps = {
   children?: never
@@ -35,11 +36,9 @@ export const Root: React.FC<OwnProps> = () => {
       />
 
       <div>
-        <input
-          type="text"
-          value="投稿内容"
-          onChange={(e) => {
-            console.log(e.target.value)
+        <InputPost
+          onChange={(text) => {
+            console.log(text)
           }}
         />
       </div>
