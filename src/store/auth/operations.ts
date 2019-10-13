@@ -1,5 +1,13 @@
 import { replace } from "connected-react-router"
-import { TWITTER_CALLBACK_URL } from "src/constants/Env"
+import {
+  GOOGLE_API_API_KEY,
+  GOOGLE_API_CLIENT_ID,
+  TWITTER_CALLBACK_URL,
+} from "src/constants/Env"
+import {
+  GOOGLE_API_DISCOVERY_DOCS,
+  GOOGLE_API_SCOPES,
+} from "src/constants/GoogleAPI"
 import { RoutePath } from "src/constants/RoutePaths"
 import {
   createAccessTokens,
@@ -8,8 +16,12 @@ import {
 import { toSerializableError } from "src/domain/errors/SerializableError"
 import { TwitterOauthVerifier } from "src/domain/models/Twitter"
 import { AppThunkAction } from "src/types/ReduxTypes"
+import { FixMeAny } from "src/types/Utils"
 import * as actions from "./actions"
 
+/**
+ * Twitter
+ */
 export const twitterSignIn = (): AppThunkAction => {
   return async (dispatch) => {
     dispatch(actions.twitterSignIn.started())
@@ -91,5 +103,82 @@ export const twitterSignInFinalize = (
     // クエリパラメータを取り込み終わったら、クエリパラメータを消すため遷移
     // 「戻る」ができると再度ここの処理が無駄に走るため、履歴は残さない
     dispatch(replace(RoutePath.Settings))
+  }
+}
+
+export const twitterSignOut = actions.twitterSignOut
+
+/**
+ * Google
+ */
+/**
+ * このインスタンスがステートフルなので、グローバル変数扱いする
+ * 認証状態は、Redux state に転写することで変更検知可能にしている
+ */
+let googleAuth: gapi.auth2.GoogleAuth | undefined
+
+const initGoogleAuthClient = (): Promise<void> => {
+  // gapi.load が callback 地獄なので、Promise 化
+  return new Promise((resolve) => {
+    const loadCb = async (): Promise<void> => {
+      await gapi.client.init({
+        apiKey: GOOGLE_API_API_KEY,
+        discoveryDocs: GOOGLE_API_DISCOVERY_DOCS,
+        clientId: GOOGLE_API_CLIENT_ID,
+        scope: GOOGLE_API_SCOPES,
+      })
+
+      googleAuth = gapi.auth2.getAuthInstance()
+      resolve()
+    }
+
+    // 無駄な初期化を防ぐため
+    if (!googleAuth) {
+      gapi.load("client:auth2", loadCb as FixMeAny)
+    }
+  })
+}
+
+export const googleSignIn = (): AppThunkAction => {
+  return async (dispatch) => {
+    dispatch(actions.googleSignIn.started())
+
+    if (!googleAuth) {
+      await initGoogleAuthClient()
+    }
+    if (!googleAuth) {
+      throw new Error("Initialize before call operations")
+    }
+
+    try {
+      await googleAuth.signIn()
+    } catch (error) {
+      console.log(error)
+
+      dispatch(
+        actions.googleSignIn.failed({
+          error: toSerializableError(error),
+        })
+      )
+      return
+    }
+
+    dispatch(
+      actions.googleSignIn.done({
+        result: googleAuth.currentUser
+          .get()
+          .hasGrantedScopes(GOOGLE_API_SCOPES),
+      })
+    )
+  }
+}
+
+export const googleSignOut = (): AppThunkAction<void> => {
+  return (dispatch) => {
+    if (!googleAuth) {
+      throw new Error("Initialize before call operations")
+    }
+    googleAuth.signOut()
+    dispatch(actions.googleSignOut)
   }
 }
