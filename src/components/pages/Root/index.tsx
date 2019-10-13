@@ -6,6 +6,7 @@ import SendIcon from "@material-ui/icons/Send"
 import React from "react"
 import { useHistory } from "react-router"
 import { RoutePath } from "src/constants/RoutePaths"
+import { InputUrl } from "src/components/organisms/InputUrl"
 
 type OwnProps = {
   children?: never
@@ -27,14 +28,20 @@ export const Root: React.FC<OwnProps> = () => {
         </Button>
       </div>
 
-      <div>
-        <input type="text" value="url" />
-      </div>
-      <div>開く</div>
-      <div>閉じる</div>
+      <InputUrl
+        onSubmit={(value) => {
+          console.log(value)
+        }}
+      />
 
       <div>
-        <input type="text" value="投稿内容" />
+        <input
+          type="text"
+          value="投稿内容"
+          onChange={(e) => {
+            console.log(e.target.value)
+          }}
+        />
       </div>
 
       <div>
