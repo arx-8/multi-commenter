@@ -175,10 +175,12 @@ export const googleSignIn = (): AppThunkAction => {
 
 export const googleSignOut = (): AppThunkAction<void> => {
   return (dispatch) => {
+    dispatch(actions.googleSignOut)
+
     if (!googleAuth) {
-      throw new Error("Initialize before call operations")
+      // 認証前にサインアウトボタンが押される可能性もあるため
+      return
     }
     googleAuth.signOut()
-    dispatch(actions.googleSignOut)
   }
 }
