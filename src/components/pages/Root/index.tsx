@@ -5,6 +5,8 @@ import BuildIcon from "@material-ui/icons/Build"
 import SendIcon from "@material-ui/icons/Send"
 import React from "react"
 import { useHistory } from "react-router"
+import { InputPost } from "src/components/organisms/InputPost"
+import { InputUrl } from "src/components/organisms/InputUrl"
 import { RoutePath } from "src/constants/RoutePaths"
 
 type OwnProps = {
@@ -27,14 +29,18 @@ export const Root: React.FC<OwnProps> = () => {
         </Button>
       </div>
 
-      <div>
-        <input type="text" value="url" />
-      </div>
-      <div>開く</div>
-      <div>閉じる</div>
+      <InputUrl
+        onSubmit={(value) => {
+          console.log(value)
+        }}
+      />
 
       <div>
-        <input type="text" value="投稿内容" />
+        <InputPost
+          onChange={(text) => {
+            console.log(text)
+          }}
+        />
       </div>
 
       <div>
