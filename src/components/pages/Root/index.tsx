@@ -1,13 +1,14 @@
 /** @jsx jsx */
-import { css, jsx } from "@emotion/core"
+import { jsx } from "@emotion/core"
 import Button from "@material-ui/core/Button"
 import BuildIcon from "@material-ui/icons/Build"
 import SendIcon from "@material-ui/icons/Send"
-import React from "react"
+import React, { Fragment } from "react"
 import { useSelector } from "react-redux"
 import { useHistory } from "react-router"
 import { Header } from "src/components/molecules/Header"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
+import { Content } from "src/components/molecules/Content"
 import { InputPost } from "src/components/organisms/InputPost"
 import { InputUrl } from "src/components/organisms/InputUrl"
 import { headerIconColor } from "src/components/styles/styles"
@@ -26,7 +27,7 @@ export const Root: React.FC<OwnProps> = () => {
   )
 
   return (
-    <div css={root}>
+    <Fragment>
       <Header>
         <InputUrl
           onSubmit={(value) => {
@@ -45,28 +46,28 @@ export const Root: React.FC<OwnProps> = () => {
         </IconButtonWithTooltip>
       </Header>
 
-      <div>
-        <InputPost
-          onChange={(text) => {
-            console.log(text)
-          }}
-        />
-      </div>
+      <Content>
+        <div>
+          <InputPost
+            onChange={(text) => {
+              console.log(text)
+            }}
+          />
+        </div>
 
-      <div>
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            console.log("TODO")
-          }}
-        >
-          投稿
-          <SendIcon />
-        </Button>
-      </div>
-    </div>
+        <div>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              console.log("TODO")
+            }}
+          >
+            投稿
+            <SendIcon />
+          </Button>
+        </div>
+      </Content>
+    </Fragment>
   )
 }
-
-const root = css``
