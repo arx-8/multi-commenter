@@ -10,6 +10,9 @@ import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router"
 import { TwitterIcon } from "src/components/atoms/TwitterIcon"
 import { YouTubeIcon } from "src/components/atoms/YouTubeIcon"
+import { Header } from "src/components/molecules/Header"
+import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
+import { headerIconColor } from "src/components/styles/styles"
 import { RoutePath } from "src/constants/RoutePaths"
 import { authOperations, authSelectors } from "src/store/auth"
 import { RootState } from "src/store/store"
@@ -33,18 +36,16 @@ export const Settings: React.FC<OwnProps> = () => {
 
   return (
     <div css={root}>
-      <div>
-        <Button
-          variant="contained"
-          color="default"
+      <Header>
+        <IconButtonWithTooltip
           onClick={() => {
             history.push(RoutePath.Root)
           }}
+          tooltipMessage="戻る"
         >
-          戻る
-          <ArrowBackIcon />
-        </Button>
-      </div>
+          <ArrowBackIcon css={headerIconColor} />
+        </IconButtonWithTooltip>
+      </Header>
 
       <div css={buttons}>
         <Button

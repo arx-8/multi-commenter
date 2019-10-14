@@ -1,5 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
+import Paper from "@material-ui/core/Paper"
+import { createStyles, makeStyles } from "@material-ui/core/styles"
 import { Form, Formik } from "formik"
 import React from "react"
 import { InnerInput } from "src/components/organisms/InputUrl/InnerInput"
@@ -25,7 +27,23 @@ const validationSchema = Yup.object().shape<FormValues>({
     .required("YouTube LiveのURLを入力してください"),
 })
 
+const useStyles = makeStyles(() =>
+  createStyles({
+    root: {
+      display: "flex",
+      marginTop: "4px",
+      marginBottom: "4px",
+      paddingLeft: "4px",
+    },
+    inputRoot: {
+      flexGrow: 1,
+    },
+  })
+)
+
 export const InputUrl: React.FC<OwnProps> = ({ onSubmit }) => {
+  const classes = useStyles()
+
   return (
     <Formik
       initialValues={initialValues}
@@ -35,22 +53,23 @@ export const InputUrl: React.FC<OwnProps> = ({ onSubmit }) => {
       }}
       validateOnChange
     >
-      <Form>
-        <div css={root}>
-          <div>
-            <InnerInput
-              name="url"
-              placeholder="https://www.youtube.com/watch?v=xxx"
-              size={40}
-            />
-          </div>
+      <Form css={root}>
+        <Paper className={classes.root}>
+          <InnerInput
+            name="url"
+            placeholder="https://www.youtube.com/watch?v=xxx"
+            inputProps={{ "aria-label": "Open URL" }}
+            classes={{
+              root: classes.inputRoot,
+            }}
+          />
           <SubmitButton />
-        </div>
+        </Paper>
       </Form>
     </Formik>
   )
 }
 
 const root = css`
-  display: flex;
+  flex-grow: 1;
 `

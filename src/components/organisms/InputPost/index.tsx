@@ -1,11 +1,11 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import Button from "@material-ui/core/Button"
 import EmojiIcon from "@material-ui/icons/EmojiEmotions"
 import { Editor, EditorState, Modifier } from "draft-js"
 import { EmojiData, Picker } from "emoji-mart"
 import "emoji-mart/css/emoji-mart.css"
 import React, { useCallback, useState } from "react"
+import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
 
 type OwnProps = {
   children?: never
@@ -63,13 +63,14 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
           />
         </div>
 
-        <Button
+        <IconButtonWithTooltip
           onClick={() => {
             toggleShowPicker()
           }}
+          tooltipMessage="絵文字入力"
         >
           <EmojiIcon />
-        </Button>
+        </IconButtonWithTooltip>
       </div>
       <div>
         {showPicker && (

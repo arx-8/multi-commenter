@@ -1,5 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
+import { InputBase } from "@material-ui/core"
+import { InputBaseProps } from "@material-ui/core/InputBase"
 import { useField } from "formik"
 import React, { Fragment } from "react"
 
@@ -8,14 +10,14 @@ type OwnProps = {
   name: string
 }
 
-type Props = OwnProps & React.InputHTMLAttributes<HTMLInputElement>
+type Props = OwnProps & InputBaseProps
 
-export const InnerInput: React.FC<Props> = ({ name, ...rest }) => {
+export const InnerInput: React.FC<Props> = ({ name, ...inputBaseProps }) => {
   const [field, meta] = useField(name)
 
   return (
     <Fragment>
-      <input type="text" {...rest} {...field} />
+      <InputBase {...inputBaseProps} {...field} />
       {meta.error && meta.touched && <div css={error}>{meta.error}</div>}
     </Fragment>
   )
@@ -23,4 +25,8 @@ export const InnerInput: React.FC<Props> = ({ name, ...rest }) => {
 
 const error = css`
   color: crimson;
+
+  /* flexとの兼ね合いでうまく位置が取れてないため、一旦 absolute */
+  position: absolute;
+  bottom: 4px;
 `
