@@ -6,12 +6,19 @@ import { EmojiData, Picker } from "emoji-mart"
 import "emoji-mart/css/emoji-mart.css"
 import React, { useCallback, useState } from "react"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
+import { Button } from "@material-ui/core"
+import SendIcon from "@material-ui/icons/Send"
 
 type OwnProps = {
   children?: never
   onChange: (value: string) => void
 }
 
+/**
+ * パフォーマンスの理由で、state を使っている
+ * そのため、少し複雑化している
+ * state を使っている理由は、テキスト入力はなるべく速くできた方がよいため
+ */
 export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
   // showPicker
   const [showPicker, setShowPicker] = useState(false)
@@ -49,20 +56,20 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
 
   return (
     <div css={root}>
-      <div>
-        <div css={editor}>
-          <Editor
-            editorState={editorState}
-            onChange={(editorState) => {
-              setEditorState(editorState)
+      <div css={editor}>
+        <Editor
+          editorState={editorState}
+          onChange={(editorState) => {
+            setEditorState(editorState)
 
-              // send to parent component
-              onChange(editorState.getCurrentContent().getPlainText())
-            }}
-            placeholder="メッセージを入力..."
-          />
-        </div>
+            // send to parent component
+            onChange(editorState.getCurrentContent().getPlainText())
+          }}
+          placeholder="メッセージを入力..."
+        />
+      </div>
 
+      <div css={actions}>
         <IconButtonWithTooltip
           onClick={() => {
             toggleShowPicker()
@@ -71,8 +78,21 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
         >
           <EmojiIcon />
         </IconButtonWithTooltip>
+
+        <Button
+          css={separator}
+          variant="contained"
+          color="primary"
+          onClick={() => {
+            console.log("TODO")
+          }}
+        >
+          投稿
+          <SendIcon css={icon} />
+        </Button>
       </div>
-      <div>
+
+      <div css={separator}>
         {showPicker && (
           <Picker
             emoji=""
@@ -124,4 +144,18 @@ const editor = css`
     position: absolute;
     color: gray;
   }
+`
+
+const actions = css`
+  display: flex;
+  justify-content: space-between;
+`
+
+const separator = css`
+  margin-top: 8px;
+`
+
+const icon = css`
+  display: flex;
+  padding-left: 8px;
 `
