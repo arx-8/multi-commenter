@@ -6,7 +6,7 @@ import { EmojiData, Picker } from "emoji-mart"
 import "emoji-mart/css/emoji-mart.css"
 import React, { useCallback, useState } from "react"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
-import { Button } from "@material-ui/core"
+import { Button, TextField } from "@material-ui/core"
 import SendIcon from "@material-ui/icons/Send"
 
 type OwnProps = {
@@ -54,6 +54,9 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
     [editorState, onChange]
   )
 
+  // tweet suffix
+  const [tweetSuffix, setTweetSuffix] = useState("")
+
   return (
     <div css={root}>
       <div css={editor}>
@@ -66,6 +69,22 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
             onChange(editorState.getCurrentContent().getPlainText())
           }}
           placeholder="メッセージを入力..."
+        />
+      </div>
+
+      <div css={separator}>
+        <TextField
+          fullWidth
+          InputLabelProps={{
+            shrink: true,
+          }}
+          label="ツイート接尾辞"
+          onChange={(e) => {
+            setTweetSuffix(e.target.value)
+          }}
+          placeholder="#example (ハッシュタグなど、ツイートのみ接尾辞を付けて投稿できます)"
+          value={tweetSuffix}
+          variant="outlined"
         />
       </div>
 
