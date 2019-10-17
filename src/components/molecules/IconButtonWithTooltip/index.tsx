@@ -1,8 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import { Badge } from "@material-ui/core"
-import IconButton from "@material-ui/core/IconButton"
-import Tooltip from "@material-ui/core/Tooltip"
+import { Badge, IconButton, Tooltip } from "@material-ui/core"
 import React, { ReactNode } from "react"
 
 type OwnProps = {

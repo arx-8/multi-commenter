@@ -1,7 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import AppBar from "@material-ui/core/AppBar"
-import Toolbar from "@material-ui/core/Toolbar"
+import { AppBar, Toolbar } from "@material-ui/core"
 import React, { ReactNode } from "react"
 
 type OwnProps = {

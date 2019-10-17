@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import Button from "@material-ui/core/Button"
+import { Button } from "@material-ui/core"
 import ArrowBackIcon from "@material-ui/icons/ArrowBack"
 import DeleteIcon from "@material-ui/icons/Delete"
 import React, { Fragment } from "react"
@@ -8,9 +8,9 @@ import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router"
 import { TwitterIcon } from "src/components/atoms/TwitterIcon"
 import { YouTubeIcon } from "src/components/atoms/YouTubeIcon"
+import { Content } from "src/components/molecules/Content"
 import { Header } from "src/components/molecules/Header"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
-import { Content } from "src/components/molecules/Content"
 import {
   headerIconColor,
   logoColorTwitter,

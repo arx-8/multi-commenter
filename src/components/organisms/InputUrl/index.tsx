@@ -1,7 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import Paper from "@material-ui/core/Paper"
-import { createStyles, makeStyles } from "@material-ui/core/styles"
+import { createStyles, makeStyles, Paper } from "@material-ui/core"
 import { Form, Formik } from "formik"
 import React from "react"
 import { InnerInput } from "src/components/organisms/InputUrl/InnerInput"
