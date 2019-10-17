@@ -1,13 +1,13 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
+import { Button, TextField, Typography } from "@material-ui/core"
 import EmojiIcon from "@material-ui/icons/EmojiEmotions"
+import SendIcon from "@material-ui/icons/Send"
 import { Editor, EditorState, Modifier } from "draft-js"
 import { EmojiData, Picker } from "emoji-mart"
 import "emoji-mart/css/emoji-mart.css"
 import React, { useCallback, useState } from "react"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
-import { Button, TextField } from "@material-ui/core"
-import SendIcon from "@material-ui/icons/Send"
 
 type OwnProps = {
   children?: never
@@ -98,17 +98,28 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
           <EmojiIcon />
         </IconButtonWithTooltip>
 
-        <Button
-          css={separator}
-          variant="contained"
-          color="primary"
-          onClick={() => {
-            console.log("TODO")
-          }}
-        >
-          投稿
-          <SendIcon css={icon} />
-        </Button>
+        <div css={[separator, actionsRight]}>
+          <Typography css={remainingNumCounter} variant="subtitle2">
+            {/* TODO count as twitter-text */}
+            残り{" "}
+            {280 -
+              (editorState.getCurrentContent().getPlainText().length +
+                tweetSuffix.length +
+                1)}{" "}
+            文字
+          </Typography>
+          <Button
+            css={separatorHorizontal}
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              console.log("TODO")
+            }}
+          >
+            投稿
+            <SendIcon css={icon} />
+          </Button>
+        </div>
       </div>
 
       <div css={separator}>
@@ -170,8 +181,22 @@ const actions = css`
   justify-content: space-between;
 `
 
+const actionsRight = css`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`
+
+const remainingNumCounter = css`
+  color: red;
+`
+
 const separator = css`
   margin-top: 8px;
+`
+
+const separatorHorizontal = css`
+  margin-left: 8px;
 `
 
 const icon = css`
