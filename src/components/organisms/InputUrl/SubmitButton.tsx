@@ -1,25 +1,26 @@
 /** @jsx jsx */
 import { jsx } from "@emotion/core"
-import Button from "@material-ui/core/Button"
 import ArrowRightAltIcon from "@material-ui/icons/ArrowRightAlt"
 import { useFormikContext } from "formik"
 import React from "react"
+import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
 
 type OwnProps = {
   children?: never
 }
 
 export const SubmitButton: React.FC<OwnProps> = () => {
-  const { handleSubmit } = useFormikContext()
+  const { handleSubmit, isSubmitting } = useFormikContext()
 
   return (
-    <Button
-      variant="contained"
+    <IconButtonWithTooltip
       onClick={() => {
         handleSubmit()
       }}
+      disabled={isSubmitting}
+      tooltipMessage="Connect!"
     >
       <ArrowRightAltIcon />
-    </Button>
+    </IconButtonWithTooltip>
   )
 }

@@ -1,13 +1,20 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import Button from "@material-ui/core/Button"
 import BuildIcon from "@material-ui/icons/Build"
-import SendIcon from "@material-ui/icons/Send"
-import React from "react"
+import React, { Fragment } from "react"
+import { useSelector } from "react-redux"
 import { useHistory } from "react-router"
+import { Content } from "src/components/molecules/Content"
+import { Header } from "src/components/molecules/Header"
+import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
 import { InputPost } from "src/components/organisms/InputPost"
 import { InputUrl } from "src/components/organisms/InputUrl"
+import { PreviewCard } from "src/components/organisms/PreviewCard"
+import { PreviewCardAsSkeleton } from "src/components/organisms/PreviewCardAsSkeleton"
+import { headerIconColor } from "src/components/styles/styles"
 import { RoutePath } from "src/constants/RoutePaths"
+import { authSelectors } from "src/store/auth"
+import { RootState } from "src/store/store"
 
 type OwnProps = {
   children?: never
@@ -15,48 +22,57 @@ type OwnProps = {
 
 export const Root: React.FC<OwnProps> = () => {
   const history = useHistory()
+  const isAllAuthorized = useSelector((state: RootState) =>
+    authSelectors.isAllAuthorized(state.auth)
+  )
 
   return (
-    <div css={root}>
-      <div>
-        <Button
-          variant="contained"
-          color="default"
-          onClick={() => history.push(RoutePath.Settings)}
-        >
-          設定
-          <BuildIcon />
-        </Button>
-      </div>
-
-      <InputUrl
-        onSubmit={(value) => {
-          console.log(value)
-        }}
-      />
-
-      <div>
-        <InputPost
-          onChange={(text) => {
-            console.log(text)
+    <Fragment>
+      <Header>
+        <InputUrl
+          onSubmit={(value) => {
+            console.log(value)
           }}
         />
-      </div>
 
-      <div>
-        <Button
-          variant="contained"
-          color="primary"
+        <IconButtonWithTooltip
           onClick={() => {
-            console.log("TODO")
+            history.push(RoutePath.Settings)
           }}
+          tooltipMessage="設定"
+          showBadge={!isAllAuthorized}
         >
-          投稿
-          <SendIcon />
-        </Button>
-      </div>
-    </div>
+          <BuildIcon css={headerIconColor} />
+        </IconButtonWithTooltip>
+      </Header>
+
+      <Content>
+        <div css={previewCard}>
+          {/* TODO loading */}
+          {new Date().getMinutes() % 2 === 1 ? (
+            <PreviewCard />
+          ) : (
+            <PreviewCardAsSkeleton />
+          )}
+        </div>
+
+        <div css={inputPost}>
+          <InputPost
+            onChange={(text) => {
+              console.log(text)
+            }}
+          />
+        </div>
+      </Content>
+    </Fragment>
   )
 }
 
-const root = css``
+const previewCard = css`
+  display: flex;
+  justify-content: center;
+`
+
+const inputPost = css`
+  padding-top: 8px;
+`

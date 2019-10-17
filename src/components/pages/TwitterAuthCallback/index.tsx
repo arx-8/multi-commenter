@@ -1,5 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
+import { CircularProgress } from "@material-ui/core"
 import { parse } from "querystring"
 import React from "react"
 import { useDispatch } from "react-redux"
@@ -7,7 +8,6 @@ import { useHistory, useLocation } from "react-router"
 import { RoutePath } from "src/constants/RoutePaths"
 import { TwitterOAuthCallbackQueryParams } from "src/domain/models/Twitter"
 import { authOperations } from "src/store/auth"
-import CircularProgress from "@material-ui/core/CircularProgress"
 
 type OwnProps = {
   children?: never

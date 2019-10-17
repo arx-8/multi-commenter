@@ -1,17 +1,24 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import Button from "@material-ui/core/Button"
+import { Button, TextField, Typography } from "@material-ui/core"
 import EmojiIcon from "@material-ui/icons/EmojiEmotions"
+import SendIcon from "@material-ui/icons/Send"
 import { Editor, EditorState, Modifier } from "draft-js"
 import { EmojiData, Picker } from "emoji-mart"
 import "emoji-mart/css/emoji-mart.css"
 import React, { useCallback, useState } from "react"
+import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
 
 type OwnProps = {
   children?: never
   onChange: (value: string) => void
 }
 
+/**
+ * パフォーマンスの理由で、state を使っている
+ * そのため、少し複雑化している
+ * state を使っている理由は、テキスト入力はなるべく速くできた方がよいため
+ */
 export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
   // showPicker
   const [showPicker, setShowPicker] = useState(false)
@@ -47,31 +54,75 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
     [editorState, onChange]
   )
 
+  // tweet suffix
+  const [tweetSuffix, setTweetSuffix] = useState("")
+
   return (
     <div css={root}>
-      <div>
-        <div css={editor}>
-          <Editor
-            editorState={editorState}
-            onChange={(editorState) => {
-              setEditorState(editorState)
+      <div css={editor}>
+        <Editor
+          editorState={editorState}
+          onChange={(editorState) => {
+            setEditorState(editorState)
 
-              // send to parent component
-              onChange(editorState.getCurrentContent().getPlainText())
-            }}
-            placeholder="メッセージを入力..."
-          />
-        </div>
+            // send to parent component
+            onChange(editorState.getCurrentContent().getPlainText())
+          }}
+          placeholder="メッセージを入力..."
+        />
+      </div>
 
-        <Button
+      <div css={separator}>
+        <TextField
+          fullWidth
+          InputLabelProps={{
+            shrink: true,
+          }}
+          label="ツイート接尾辞"
+          onChange={(e) => {
+            setTweetSuffix(e.target.value)
+          }}
+          placeholder="#example (ハッシュタグなど、ツイートのみ接尾辞を付けて投稿できます)"
+          value={tweetSuffix}
+          variant="outlined"
+        />
+      </div>
+
+      <div css={actions}>
+        <IconButtonWithTooltip
           onClick={() => {
             toggleShowPicker()
           }}
+          tooltipMessage="絵文字入力"
         >
           <EmojiIcon />
-        </Button>
+        </IconButtonWithTooltip>
+
+        <div css={[separator, actionsRight]}>
+          <Typography css={remainingNumCounter} variant="subtitle2">
+            {/* TODO count as twitter-text */}
+            残り{" "}
+            {280 -
+              (editorState.getCurrentContent().getPlainText().length +
+                tweetSuffix.length +
+                1)}{" "}
+            文字
+          </Typography>
+          <Button
+            css={separatorHorizontal}
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              console.log("TODO")
+            }}
+          >
+            投稿
+            <SendIcon css={icon} />
+          </Button>
+        </div>
       </div>
-      <div>
+
+      <div css={separator}>
         {showPicker && (
           <Picker
             emoji=""
@@ -123,4 +174,32 @@ const editor = css`
     position: absolute;
     color: gray;
   }
+`
+
+const actions = css`
+  display: flex;
+  justify-content: space-between;
+`
+
+const actionsRight = css`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+`
+
+const remainingNumCounter = css`
+  color: red;
+`
+
+const separator = css`
+  margin-top: 8px;
+`
+
+const separatorHorizontal = css`
+  margin-left: 8px;
+`
+
+const icon = css`
+  display: flex;
+  padding-left: 8px;
 `
