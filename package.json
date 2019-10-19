@@ -27,6 +27,7 @@
     "redux-localstorage": "0.4.1",
     "redux-starter-kit": "0.7.0",
     "redux-thunk": "2.3.0",
+    "twitter-text": "3.0.0",
     "typescript-fsa": "3.0.0",
     "yup": "0.27.0"
   },
@@ -42,6 +43,7 @@
     "@types/react-redux": "7.1.4",
     "@types/react-router-dom": "5.1.0",
     "@types/redux-immutable-state-invariant": "2.1.1",
+    "@types/twitter-text": "2.0.0",
     "@types/yup": "0.26.24",
     "eslint-config-prettier": "6.3.0",
     "eslint-plugin-jest": "22.17.0",
