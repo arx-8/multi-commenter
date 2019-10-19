@@ -8,6 +8,7 @@ import { EmojiData, Picker } from "emoji-mart"
 import "emoji-mart/css/emoji-mart.css"
 import React, { useCallback, useState } from "react"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
+import { countRemaining } from "src/utils/CommentUtils"
 
 type OwnProps = {
   children?: never
@@ -102,10 +103,9 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
           <Typography css={remainingNumCounter} variant="subtitle2">
             {/* TODO count as twitter-text */}
             残り{" "}
-            {280 -
-              (editorState.getCurrentContent().getPlainText().length +
-                tweetSuffix.length +
-                1)}{" "}
+            {countRemaining(
+              editorState.getCurrentContent().getPlainText() + " " + tweetSuffix
+            )}{" "}
             文字
           </Typography>
           <Button
