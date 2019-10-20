@@ -117,8 +117,8 @@ export const twitterSignOut = actions.twitterSignOut
  */
 let googleAuth: gapi.auth2.GoogleAuth | undefined
 
-const initGoogleAuthClient = (): Promise<void> => {
-  // gapi.load が callback 地獄なので、Promise 化
+export const initGoogleAuthClient = (): Promise<void> => {
+  // gapi.load が callback hell なので、Promise 化
   return new Promise((resolve) => {
     const loadCb = async (): Promise<void> => {
       await gapi.client.init({
@@ -132,23 +132,17 @@ const initGoogleAuthClient = (): Promise<void> => {
       resolve()
     }
 
-    // 無駄な初期化を防ぐため
-    if (!googleAuth) {
-      gapi.load("client:auth2", loadCb as FixMeAny)
-    }
+    gapi.load("client:auth2", loadCb as FixMeAny)
   })
 }
 
 export const googleSignIn = (): AppThunkAction => {
   return async (dispatch) => {
-    dispatch(actions.googleSignIn.started())
-
-    if (!googleAuth) {
-      await initGoogleAuthClient()
-    }
     if (!googleAuth) {
       throw new Error("Initialize before call operations")
     }
+
+    dispatch(actions.googleSignIn.started())
 
     try {
       await googleAuth.signIn()
@@ -175,7 +169,7 @@ export const googleSignIn = (): AppThunkAction => {
 
 export const googleSignOut = (): AppThunkAction<void> => {
   return (dispatch) => {
-    dispatch(actions.googleSignOut)
+    dispatch(actions.googleSignOut())
 
     if (!googleAuth) {
       // 認証前にサインアウトボタンが押される可能性もあるため

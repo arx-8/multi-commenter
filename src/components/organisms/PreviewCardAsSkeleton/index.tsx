@@ -1,12 +1,11 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import { Card, CardContent } from "@material-ui/core"
+import { Card, CardContent, CircularProgress } from "@material-ui/core"
 import { makeStyles } from "@material-ui/core/styles"
 import Skeleton from "@material-ui/lab/Skeleton"
 import React from "react"
 import { useSelector } from "react-redux"
 import { RootState } from "src/store/store"
-import { CircularProgress } from "@material-ui/core"
 
 type OwnProps = {
   children?: never
