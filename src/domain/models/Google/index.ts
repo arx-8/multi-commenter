@@ -27,7 +27,9 @@ export const extractVideoIdByURL = (url: string): YouTubeVideoId => {
  */
 export type YouTubeActiveLive = {
   activeLiveChatId: YouTubeActiveLiveChatId
+  description: string
   thumbnailUrl: string
+  title: string
 }
 
 /**
@@ -36,15 +38,13 @@ export type YouTubeActiveLive = {
 const sizeList = ["maxres", "high", "medium", "standard", "default"] as const
 
 export const extractYouTubeActiveLive = (
-  data: gapi.client.youtube.Video
+  response: gapi.client.youtube.VideoListResponse
 ): YouTubeActiveLive | undefined => {
-  // thumbnail
-  if (!data.snippet || !data.snippet.thumbnails) {
+  // 必ず 1 件の動画を読み込んでいるため、決め打ち
+  if (!response.items || response.items.length === 0) {
     return undefined
   }
-  const thumbnails = data.snippet.thumbnails
-  const maxSize = sizeList.find((s) => thumbnails[s])!
-  const thumbnailUrl = thumbnails[maxSize]!.url!
+  const data = response.items[0]
 
   // activeLiveChatId
   if (
@@ -56,8 +56,19 @@ export const extractYouTubeActiveLive = (
   const activeLiveChatId = data.liveStreamingDetails
     .activeLiveChatId as YouTubeActiveLiveChatId
 
+  // thumbnail
+  if (!data.snippet || !data.snippet.thumbnails) {
+    return undefined
+  }
+  const thumbnails = data.snippet.thumbnails
+  const maxSize = sizeList.find((s) => thumbnails[s])!
+  const thumbnailUrl = thumbnails[maxSize]!.url!
+
   return {
     activeLiveChatId,
     thumbnailUrl,
+    // thumb があればあるだろうから!
+    description: data.snippet.description!,
+    title: data.snippet.title!,
   }
 }

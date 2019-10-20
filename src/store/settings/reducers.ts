@@ -27,11 +27,28 @@ export const reducer: Reducer<State, Action> = (
   state = initialState,
   action
 ) => {
-  /**
-   * Twitter
-   */
-  if (isType(action, actions.loadVideo.started)) {
-    return produce(state, () => {})
+  if (isType(action, actions.fetchYouTubeActiveLive.started)) {
+    return produce(state, (draft) => {
+      draft.ui.youTubeData.isLoading = true
+      draft.ui.youTubeData.errorMsg = ""
+    })
+  }
+  if (isType(action, actions.fetchYouTubeActiveLive.done)) {
+    return produce(state, (draft) => {
+      draft.youTubeData = action.payload.result
+
+      draft.ui.youTubeData.isLoading = false
+      const errorMsg = action.payload.result
+        ? ""
+        : "Live が読み込めませんでした。既にライブが終了しているか、不正な URL です。"
+      draft.ui.youTubeData.errorMsg = errorMsg
+    })
+  }
+  if (isType(action, actions.fetchYouTubeActiveLive.failed)) {
+    return produce(state, (draft) => {
+      draft.ui.youTubeData.isLoading = false
+      draft.ui.youTubeData.errorMsg = action.payload.error.message
+    })
   }
 
   return state
