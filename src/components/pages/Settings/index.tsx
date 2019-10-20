@@ -4,7 +4,7 @@ import { Button } from "@material-ui/core"
 import ArrowBackIcon from "@material-ui/icons/ArrowBack"
 import DeleteIcon from "@material-ui/icons/Delete"
 import React, { Fragment } from "react"
-import { useDispatch, useSelector } from "react-redux"
+import { batch, useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router"
 import { TwitterIcon } from "src/components/atoms/TwitterIcon"
 import { YouTubeIcon } from "src/components/atoms/YouTubeIcon"
@@ -87,9 +87,12 @@ export const Settings: React.FC<OwnProps> = () => {
             variant="contained"
             color="secondary"
             onClick={() => {
-              dispatch(authOperations.twitterSignOut())
-              dispatch(authOperations.googleSignOut())
+              batch(() => {
+                dispatch(authOperations.twitterSignOut())
+                dispatch(authOperations.googleSignOut())
+              })
             }}
+            disabled={!isAuthorizedGoogle && !isAuthorizedTwitter}
           >
             連携解除
             <DeleteIcon css={icon} />

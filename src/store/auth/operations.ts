@@ -132,7 +132,7 @@ export const initGoogleAuthClient = (): Promise<void> => {
       resolve()
     }
 
-      gapi.load("client:auth2", loadCb as FixMeAny)
+    gapi.load("client:auth2", loadCb as FixMeAny)
   })
 }
 
@@ -169,7 +169,7 @@ export const googleSignIn = (): AppThunkAction => {
 
 export const googleSignOut = (): AppThunkAction<void> => {
   return (dispatch) => {
-    dispatch(actions.googleSignOut)
+    dispatch(actions.googleSignOut())
 
     if (!googleAuth) {
       // 認証前にサインアウトボタンが押される可能性もあるため
