@@ -2,7 +2,7 @@
 import { css, jsx } from "@emotion/core"
 import BuildIcon from "@material-ui/icons/Build"
 import React, { Fragment } from "react"
-import { useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router"
 import { Content } from "src/components/molecules/Content"
 import { Header } from "src/components/molecules/Header"
@@ -14,6 +14,7 @@ import { PreviewCardAsSkeleton } from "src/components/organisms/PreviewCardAsSke
 import { headerIconColor } from "src/components/styles/styles"
 import { RoutePath } from "src/constants/RoutePaths"
 import { authSelectors } from "src/store/auth"
+import { settingsOperations, settingsSelectors } from "src/store/settings"
 
 type OwnProps = {
   children?: never
@@ -21,14 +22,17 @@ type OwnProps = {
 
 export const Root: React.FC<OwnProps> = () => {
   const history = useHistory()
+
+  const dispatch = useDispatch()
+  const isLoadedYouTubeData = useSelector(settingsSelectors.isLoadedYouTubeData)
   const isAllAuthorized = useSelector(authSelectors.isAllAuthorized)
 
   return (
     <Fragment>
       <Header>
         <InputUrl
-          onSubmit={(value) => {
-            console.log(value)
+          onSubmit={(url) => {
+            dispatch(settingsOperations.fetchYouTubeActiveLive(url))
           }}
         />
 
@@ -45,12 +49,7 @@ export const Root: React.FC<OwnProps> = () => {
 
       <Content>
         <div css={previewCard}>
-          {/* TODO loading */}
-          {new Date().getMinutes() % 2 === 1 ? (
-            <PreviewCard />
-          ) : (
-            <PreviewCardAsSkeleton />
-          )}
+          {isLoadedYouTubeData ? <PreviewCard /> : <PreviewCardAsSkeleton />}
         </div>
 
         <div css={inputPost}>
@@ -71,5 +70,5 @@ const previewCard = css`
 `
 
 const inputPost = css`
-  padding-top: 8px;
+  padding-top: 16px;
 `

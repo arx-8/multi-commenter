@@ -36,6 +36,7 @@
     "@types/emoji-mart": "2.11.0",
     "@types/gapi": "0.0.39",
     "@types/gapi.auth2": "0.0.50",
+    "@types/gapi.client.youtube": "3.0.1",
     "@types/jest": "24.0.18",
     "@types/node": "12.7.11",
     "@types/react": "16.9.5",
