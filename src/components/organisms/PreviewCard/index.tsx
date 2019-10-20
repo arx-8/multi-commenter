@@ -112,5 +112,6 @@ const opener = css`
 `
 
 const btn = css`
-  text-transform: none;
+  text-transform: none !important;
+  padding: unset;
 `
