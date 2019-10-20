@@ -1,9 +1,11 @@
-import { State } from "./reducers"
+import { RootState } from "src/store/store"
 
-export const isAuthorizedTwitter = (state: State): boolean => {
-  return !!state.twitter.accessTokens
+export const isAuthorizedTwitter = (rootState: RootState): boolean => {
+  const s = rootState.auth
+  return !!s.twitter.accessTokens
 }
 
-export const isAllAuthorized = (state: State): boolean => {
-  return isAuthorizedTwitter(state) && state.google.isAuthorized
+export const isAllAuthorized = (rootState: RootState): boolean => {
+  const s = rootState.auth
+  return isAuthorizedTwitter(rootState) && s.google.isAuthorized
 }

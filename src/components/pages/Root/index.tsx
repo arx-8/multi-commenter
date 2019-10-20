@@ -14,7 +14,6 @@ import { PreviewCardAsSkeleton } from "src/components/organisms/PreviewCardAsSke
 import { headerIconColor } from "src/components/styles/styles"
 import { RoutePath } from "src/constants/RoutePaths"
 import { authSelectors } from "src/store/auth"
-import { RootState } from "src/store/store"
 
 type OwnProps = {
   children?: never
@@ -22,9 +21,7 @@ type OwnProps = {
 
 export const Root: React.FC<OwnProps> = () => {
   const history = useHistory()
-  const isAllAuthorized = useSelector((state: RootState) =>
-    authSelectors.isAllAuthorized(state.auth)
-  )
+  const isAllAuthorized = useSelector(authSelectors.isAllAuthorized)
 
   return (
     <Fragment>
