@@ -13,7 +13,6 @@ import { PreviewCard } from "src/components/organisms/PreviewCard"
 import { PreviewCardAsSkeleton } from "src/components/organisms/PreviewCardAsSkeleton"
 import { headerIconColor } from "src/components/styles/styles"
 import { RoutePath } from "src/constants/RoutePaths"
-import { extractVideoIdByURL } from "src/domain/models/Google"
 import { authSelectors } from "src/store/auth"
 import { settingsOperations, settingsSelectors } from "src/store/settings"
 
@@ -33,11 +32,7 @@ export const Root: React.FC<OwnProps> = () => {
       <Header>
         <InputUrl
           onSubmit={(url) => {
-            dispatch(
-              settingsOperations.fetchYouTubeActiveLive({
-                videoId: extractVideoIdByURL(url),
-              })
-            )
+            dispatch(settingsOperations.fetchYouTubeActiveLive(url))
           }}
         />
 

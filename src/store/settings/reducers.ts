@@ -5,6 +5,7 @@ import { isType } from "typescript-fsa"
 import * as actions from "./actions"
 
 export type State = Readonly<{
+  youTubeUrl?: string
   youTubeData?: YouTubeActiveLive
   ui: {
     youTubeData: {
@@ -48,6 +49,12 @@ export const reducer: Reducer<State, Action> = (
     return produce(state, (draft) => {
       draft.ui.youTubeData.isLoading = false
       draft.ui.youTubeData.errorMsg = action.payload.error.message
+    })
+  }
+
+  if (isType(action, actions.setYouTubeUrl)) {
+    return produce(state, (draft) => {
+      draft.youTubeUrl = action.payload.url
     })
   }
 
