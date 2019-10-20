@@ -26,9 +26,7 @@ type OwnProps = {
 
 export const Settings: React.FC<OwnProps> = () => {
   const dispatch = useDispatch()
-  const isAuthorizedTwitter = useSelector((state: RootState) =>
-    authSelectors.isAuthorizedTwitter(state.auth)
-  )
+  const isAuthorizedTwitter = useSelector(authSelectors.isAuthorizedTwitter)
   const isAuthorizedGoogle = useSelector(
     (state: RootState) => state.auth.google.isAuthorized
   )
