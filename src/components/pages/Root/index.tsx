@@ -70,5 +70,5 @@ const previewCard = css`
 `
 
 const inputPost = css`
-  padding-top: 8px;
+  padding-top: 16px;
 `
