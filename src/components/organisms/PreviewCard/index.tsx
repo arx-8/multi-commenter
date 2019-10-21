@@ -88,7 +88,7 @@ export const PreviewCard: React.FC<OwnProps> = () => {
 }
 
 const padding = css`
-  padding: 8px;
+  padding: 8px !important;
 `
 
 const thumb = css`
@@ -106,12 +106,13 @@ const actions = css`
 `
 
 const opener = css`
-  /* 中央に開閉ボタン表示するため */
+  /* 概ね中央に開閉ボタン表示するため */
+  margin: unset !important;
   position: absolute;
-  left: 42%;
+  left: 44%;
 `
 
 const btn = css`
   text-transform: none !important;
-  padding: unset;
+  padding: unset !important;
 `

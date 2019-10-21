@@ -39,7 +39,7 @@ export const postTweet = (
 ): Promise<PostTweetResponse> => {
   return ky
     .post(
-      "http://multi-commenter-server2.netlify.com/.netlify/functions/statuses_update",
+      "https://multi-commenter-server2.netlify.com/.netlify/functions/statuses_update",
       {
         json: params,
       }

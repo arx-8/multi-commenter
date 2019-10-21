@@ -7,9 +7,10 @@ import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTo
 
 type OwnProps = {
   children?: never
+  disabled: boolean
 }
 
-export const SubmitButton: React.FC<OwnProps> = () => {
+export const SubmitButton: React.FC<OwnProps> = ({ disabled }) => {
   const { handleSubmit, isSubmitting } = useFormikContext()
 
   return (
@@ -17,7 +18,7 @@ export const SubmitButton: React.FC<OwnProps> = () => {
       onClick={() => {
         handleSubmit()
       }}
-      disabled={isSubmitting}
+      disabled={disabled || isSubmitting}
       tooltipMessage="Connect!"
     >
       <ArrowRightAltIcon />
