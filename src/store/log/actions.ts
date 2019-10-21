@@ -1,5 +1,5 @@
 import { APP_NAME } from "src/constants/App"
-import { LogData } from "src/domain/models/Log"
+import { LogRecord } from "src/domain/models/Log"
 import actionCreatorFactory from "typescript-fsa"
 
 export const ActionTypes = {
@@ -8,4 +8,4 @@ export const ActionTypes = {
 
 const create = actionCreatorFactory(APP_NAME)
 
-export const addLog = create<LogData>(ActionTypes.ADD_LOG)
+export const addLog = create<LogRecord>(ActionTypes.ADD_LOG)

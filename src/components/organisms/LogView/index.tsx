@@ -1,24 +1,31 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
 import React from "react"
+import { useSelector } from "react-redux"
 import ReactTable, { Column } from "react-table"
 import "react-table/react-table.css"
+import { LogRecord } from "src/domain/models/Log"
+import { RootState } from "src/store/store"
 
 type OwnProps = {
   children?: never
 }
 
 export const LogView: React.FC<OwnProps> = () => {
-  const data = makeData()
+  const logs = useSelector((state: RootState) => state.log.logs)
 
   return (
     <div css={root}>
-      <ReactTable data={data} defaultPageSize={5} columns={columnsDef} />
+      <ReactTable<LogRecord>
+        columns={columnsDef}
+        data={logs}
+        defaultPageSize={5}
+      />
     </div>
   )
 }
 
-const columnsDef: Column<LogData>[] = [
+const columnsDef: Column<LogRecord>[] = [
   {
     Header: "ログ",
     headerClassName: "root-header",
@@ -26,52 +33,26 @@ const columnsDef: Column<LogData>[] = [
       {
         Header: "操作日時",
         accessor: "actionDateTime",
-        className: "td-actionDateTime",
+        width: 210,
       },
       {
         Header: "操作",
         accessor: "action",
-        className: "td-action",
       },
       {
         Header: "内容",
         accessor: "detail",
-        className: "td-detail",
       },
     ],
   },
 ]
 
 const root = css`
+  .ReactTable {
+    font-size: smaller;
+  }
+
   .root-header {
     text-align: left;
   }
 `
-
-const range = (len: number): number[] => {
-  const arr = []
-  for (let i = 0; i < len; i++) {
-    arr.push(i)
-  }
-  return arr
-}
-
-type LogData = {
-  actionDateTime: number
-  action: string
-  detail: string
-}
-
-const newPerson = (): LogData => {
-  return {
-    actionDateTime: Math.floor(Math.random() * 30),
-    action: "lll" + Math.floor(Math.random() * 30),
-    detail: "fff" + Math.floor(Math.random() * 30),
-  }
-}
-
-function makeData(len = 100): LogData[] {
-  return range(len).map(() => {
-    return newPerson()
-  })
-}

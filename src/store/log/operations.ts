@@ -1,10 +1,10 @@
-import { LogData } from "src/domain/models/Log"
+import { LogRecord } from "src/domain/models/Log"
 import { AppThunkAction } from "src/types/ReduxTypes"
 import { getNow, toDateTimeStr } from "src/utils/DateTimeUtils"
 import * as actions from "./actions"
 
 export const addLog = (
-  record: Omit<LogData, "actionDateTime">
+  record: Omit<LogRecord, "actionDateTime">
 ): AppThunkAction<void> => {
   return (dispatch) => {
     dispatch(

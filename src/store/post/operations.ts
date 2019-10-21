@@ -2,6 +2,7 @@ import { postLiveChatMessage } from "src/data/apis/GoogleAPIClient"
 import { postTweet } from "src/data/apis/MultiCommenterAPIClient"
 import { toSerializableError } from "src/domain/errors/SerializableError"
 import { TweetText } from "src/domain/models/Twitter"
+import { logOperations } from "src/store/log"
 import { AppThunkAction } from "src/types/ReduxTypes"
 import { concatAsTweet } from "src/utils/CommentUtils"
 import * as actions from "./actions"
@@ -40,6 +41,13 @@ const postTweetRequest = (message: TweetText): AppThunkAction => {
     }
 
     dispatch(actions.postTweet.done({}))
+
+    dispatch(
+      logOperations.addLog({
+        action: "Twitter に投稿",
+        detail: message,
+      })
+    )
   }
 }
 
@@ -69,5 +77,12 @@ const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
     }
 
     dispatch(actions.postYouTubeLiveChat.done({}))
+
+    dispatch(
+      logOperations.addLog({
+        action: "YouTube Chat に投稿",
+        detail: message,
+      })
+    )
   }
 }

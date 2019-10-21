@@ -1,11 +1,11 @@
 import produce from "immer"
 import { Action, Reducer } from "redux"
-import { LogData } from "src/domain/models/Log"
+import { LogRecord } from "src/domain/models/Log"
 import { isType } from "typescript-fsa"
 import * as actions from "./actions"
 
 export type State = Readonly<{
-  logs: LogData[]
+  logs: LogRecord[]
 }>
 
 export const initialState: State = {
