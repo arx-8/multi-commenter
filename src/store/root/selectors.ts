@@ -1,6 +1,7 @@
-import { RootState } from "src/store/store"
 import { authSelectors } from "src/store/auth"
+import { postSelectors } from "src/store/post"
 import { settingsSelectors } from "src/store/settings"
+import { RootState } from "src/store/store"
 
 /**
  * 投稿のための下準備(=認証など。メッセージ入力は除く。)ができてる状態か？
@@ -16,9 +17,8 @@ export const isReadyToPost = (rootState: RootState): boolean => {
     return false
   }
 
-  // 投稿中
-  const s = rootState.post
-  if (s.ui.postTweet.isLoading || s.ui.postYouTubeLiveChat.isLoading) {
+  // 投稿中？
+  if (postSelectors.isPosting(rootState)) {
     return false
   }
 

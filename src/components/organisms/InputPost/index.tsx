@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import { Button, TextField } from "@material-ui/core"
+import { Button, CircularProgress, TextField } from "@material-ui/core"
 import EmojiIcon from "@material-ui/icons/EmojiEmotions"
 import SendIcon from "@material-ui/icons/Send"
 import { Editor, EditorState, Modifier } from "draft-js"
@@ -10,7 +10,7 @@ import React, { useCallback, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
 import { RemainingNumCounter } from "src/components/molecules/RemainingNumCounter"
-import { postOperations } from "src/store/post"
+import { postOperations, postSelectors } from "src/store/post"
 import { rootSelectors } from "src/store/root"
 import { concatAsTweet, countRemaining } from "src/utils/CommentUtils"
 
@@ -26,6 +26,7 @@ type OwnProps = {
 export const InputPost: React.FC<OwnProps> = () => {
   const dispatch = useDispatch()
   const isReadyToPost = useSelector(rootSelectors.isReadyToPost)
+  const isPosting = useSelector(postSelectors.isPosting)
 
   // showPicker
   const [showPicker, setShowPicker] = useState(false)
@@ -73,8 +74,9 @@ export const InputPost: React.FC<OwnProps> = () => {
 
   return (
     <div css={root}>
-      <div css={editor}>
+      <div css={[editor, isPosting && disabledInput]}>
         <Editor
+          readOnly={isPosting}
           editorState={editorState}
           onChange={(editorState) => {
             setEditorState(editorState)
@@ -85,6 +87,8 @@ export const InputPost: React.FC<OwnProps> = () => {
 
       <div css={separator}>
         <TextField
+          css={isPosting && disabledInput}
+          disabled={isPosting}
           fullWidth
           InputLabelProps={{
             shrink: true,
@@ -130,6 +134,9 @@ export const InputPost: React.FC<OwnProps> = () => {
               }}
             >
               投稿
+              {isPosting && (
+                <CircularProgress css={isPostingCircular} size={32} />
+              )}
               <SendIcon css={icon} />
             </Button>
           </div>
@@ -237,4 +244,12 @@ const separatorHorizontal = css`
 const icon = css`
   display: flex;
   padding-left: 8px;
+`
+
+const disabledInput = css`
+  background-color: lightgray;
+`
+
+const isPostingCircular = css`
+  position: absolute;
 `
