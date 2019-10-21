@@ -7,9 +7,10 @@ import { Editor, EditorState, Modifier } from "draft-js"
 import { EmojiData, Picker } from "emoji-mart"
 import "emoji-mart/css/emoji-mart.css"
 import React, { useCallback, useState } from "react"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
 import { postOperations } from "src/store/post"
+import { rootSelectors } from "src/store/root"
 import { concatAsTweet, countRemaining } from "src/utils/CommentUtils"
 
 type OwnProps = {
@@ -23,6 +24,7 @@ type OwnProps = {
  */
 export const InputPost: React.FC<OwnProps> = () => {
   const dispatch = useDispatch()
+  const isReadyToPost = useSelector(rootSelectors.isReadyToPost)
 
   // showPicker
   const [showPicker, setShowPicker] = useState(false)
@@ -57,6 +59,16 @@ export const InputPost: React.FC<OwnProps> = () => {
 
   // tweet suffix
   const [tweetSuffix, setTweetSuffix] = useState("")
+
+  const remainingNum = countRemaining(
+    concatAsTweet(editorState.getCurrentContent().getPlainText(), tweetSuffix)
+  )
+
+  const isPostable = checkIsPostable(
+    editorState.getCurrentContent().getPlainText(),
+    isReadyToPost,
+    remainingNum
+  )
 
   return (
     <div css={root}>
@@ -98,17 +110,11 @@ export const InputPost: React.FC<OwnProps> = () => {
 
         <div css={[separator, actionsRight]}>
           <Typography css={remainingNumCounter} variant="subtitle2">
-            残り{" "}
-            {countRemaining(
-              concatAsTweet(
-                editorState.getCurrentContent().getPlainText(),
-                tweetSuffix
-              )
-            )}{" "}
-            文字
+            {`残り ${remainingNum} 文字`}
           </Typography>
           <Button
             css={separatorHorizontal}
+            disabled={!isPostable}
             variant="contained"
             color="primary"
             onClick={() => {
@@ -159,6 +165,31 @@ export const InputPost: React.FC<OwnProps> = () => {
       </div>
     </div>
   )
+}
+
+/**
+ * 投稿できる状態か？
+ */
+const checkIsPostable = (
+  main: string,
+  isReadyToPost: boolean,
+  remainingNum: number
+): boolean => {
+  if (!isReadyToPost) {
+    return false
+  }
+
+  // suffix はオプションなため、なくてもいい
+  if (main.length === 0) {
+    return false
+  }
+
+  // 文字数超過
+  if (remainingNum < 0) {
+    return false
+  }
+
+  return true
 }
 
 const root = css``
