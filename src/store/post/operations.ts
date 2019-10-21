@@ -1,3 +1,4 @@
+import { batch } from "react-redux"
 import { postLiveChatMessage } from "src/data/apis/GoogleAPIClient"
 import { postTweet } from "src/data/apis/MultiCommenterAPIClient"
 import { toSerializableError } from "src/domain/errors/SerializableError"
@@ -40,14 +41,16 @@ const postTweetRequest = (message: TweetText): AppThunkAction => {
       return
     }
 
-    dispatch(actions.postTweet.done({}))
+    batch(() => {
+      dispatch(actions.postTweet.done({}))
 
-    dispatch(
-      logOperations.addLog({
-        action: "Twitter に投稿",
-        detail: message,
-      })
-    )
+      dispatch(
+        logOperations.addLog({
+          action: "Twitter に投稿",
+          detail: message,
+        })
+      )
+    })
   }
 }
 
@@ -76,13 +79,15 @@ const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
       return
     }
 
-    dispatch(actions.postYouTubeLiveChat.done({}))
+    batch(() => {
+      dispatch(actions.postYouTubeLiveChat.done({}))
 
-    dispatch(
-      logOperations.addLog({
-        action: "YouTube Chat に投稿",
-        detail: message,
-      })
-    )
+      dispatch(
+        logOperations.addLog({
+          action: "YouTube Chat に投稿",
+          detail: message,
+        })
+      )
+    })
   }
 }

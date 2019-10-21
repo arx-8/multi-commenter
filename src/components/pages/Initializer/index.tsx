@@ -1,7 +1,8 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
 import { CircularProgress } from "@material-ui/core"
-import React, { Fragment, useState, useEffect } from "react"
+import React, { Fragment, useEffect, useState } from "react"
+import { useDispatch } from "react-redux"
 import { authOperations } from "src/store/auth"
 
 type OwnProps = {
@@ -9,14 +10,15 @@ type OwnProps = {
 }
 
 export const Initializer: React.FC<OwnProps> = ({ children }) => {
+  const dispatch = useDispatch()
   const [initializing, setInitializing] = useState(true)
 
   useEffect(() => {
     ;(async () => {
-      await authOperations.initGoogleAuthClient()
+      await dispatch(authOperations.initAndCheck())
       setInitializing(false)
     })()
-  })
+  }, [dispatch])
 
   if (initializing) {
     return (

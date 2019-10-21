@@ -1,4 +1,5 @@
 import { replace } from "connected-react-router"
+import { batch } from "react-redux"
 import {
   GOOGLE_API_API_KEY,
   GOOGLE_API_CLIENT_ID,
@@ -13,11 +14,55 @@ import {
   createAccessTokens,
   createOAuthTokens,
 } from "src/data/apis/MultiCommenterAPIClient"
+import { CreateAccessTokensResponse } from "src/data/apis/MultiCommenterAPIClient/types"
 import { toSerializableError } from "src/domain/errors/SerializableError"
 import { TwitterOauthVerifier } from "src/domain/models/Twitter"
+import { authSelectors } from "src/store/auth"
+import { logOperations } from "src/store/log"
 import { AppThunkAction } from "src/types/ReduxTypes"
 import { FixMeAny } from "src/types/Utils"
 import * as actions from "./actions"
+
+export const initAndCheck = (): AppThunkAction => {
+  return async (dispatch, getState) => {
+    dispatch(
+      logOperations.addLog({
+        action: "初期化中",
+        detail: "",
+      })
+    )
+
+    await initGoogleAuthClient()
+
+    // gapi インスタンスから読み取らないと、本当にログインできているかわからない(localstorageのキャッシュを信用しすぎない)ため
+    if (googleAuth) {
+      actions.googleSetIsAuthorized(googleAuth.isSignedIn.get())
+    } else {
+      actions.googleSetIsAuthorized(false)
+    }
+
+    let detailMsg = ""
+    const rootState = getState()
+    if (authSelectors.isAuthorizedTwitter(rootState)) {
+      detailMsg += "Twitter認証済み"
+    } else {
+      detailMsg += "Twitter未認証"
+    }
+    detailMsg += ", "
+    if (rootState.auth.google.isAuthorized) {
+      detailMsg += "YouTube認証済み"
+    } else {
+      detailMsg += "YouTube未認証"
+    }
+
+    dispatch(
+      logOperations.addLog({
+        action: "初期化完了",
+        detail: detailMsg,
+      })
+    )
+  }
+}
 
 /**
  * Twitter
@@ -75,7 +120,7 @@ export const twitterSignInFinalize = (
       )
     }
 
-    let resp
+    let resp: CreateAccessTokensResponse
     try {
       resp = await createAccessTokens({
         callback_url: TWITTER_CALLBACK_URL,
@@ -94,19 +139,41 @@ export const twitterSignInFinalize = (
       return
     }
 
-    dispatch(
-      actions.twitterSignInFinalize.done({
-        result: resp,
-      })
-    )
+    batch(() => {
+      dispatch(
+        actions.twitterSignInFinalize.done({
+          result: resp,
+        })
+      )
 
-    // クエリパラメータを取り込み終わったら、クエリパラメータを消すため遷移
-    // 「戻る」ができると再度ここの処理が無駄に走るため、履歴は残さない
-    dispatch(replace(RoutePath.Settings))
+      // クエリパラメータを取り込み終わったら、クエリパラメータを消すため遷移
+      // 「戻る」ができると再度ここの処理が無駄に走るため、履歴は残さない
+      dispatch(replace(RoutePath.Settings))
+
+      dispatch(
+        logOperations.addLog({
+          action: "Twitter 認証完了",
+          detail: "",
+        })
+      )
+    })
   }
 }
 
-export const twitterSignOut = actions.twitterSignOut
+export const twitterSignOut = (): AppThunkAction<void> => {
+  return (dispatch) => {
+    batch(() => {
+      dispatch(actions.twitterSignOut())
+
+      dispatch(
+        logOperations.addLog({
+          action: "Twitter 認証情報削除完了",
+          detail: "",
+        })
+      )
+    })
+  }
+}
 
 /**
  * Google
@@ -117,7 +184,7 @@ export const twitterSignOut = actions.twitterSignOut
  */
 let googleAuth: gapi.auth2.GoogleAuth | undefined
 
-export const initGoogleAuthClient = (): Promise<void> => {
+const initGoogleAuthClient = (): Promise<void> => {
   // gapi.load が callback hell なので、Promise 化
   return new Promise((resolve) => {
     const loadCb = async (): Promise<void> => {
@@ -157,24 +224,46 @@ export const googleSignIn = (): AppThunkAction => {
       return
     }
 
-    dispatch(
-      actions.googleSignIn.done({
-        result: googleAuth.currentUser
-          .get()
-          .hasGrantedScopes(GOOGLE_API_SCOPES),
-      })
-    )
+    batch(() => {
+      if (!googleAuth) {
+        throw new Error("Initialize before call operations")
+      }
+
+      dispatch(
+        actions.googleSignIn.done({
+          result: googleAuth.currentUser
+            .get()
+            .hasGrantedScopes(GOOGLE_API_SCOPES),
+        })
+      )
+
+      dispatch(
+        logOperations.addLog({
+          action: "YouTube 認証完了",
+          detail: "",
+        })
+      )
+    })
   }
 }
 
 export const googleSignOut = (): AppThunkAction<void> => {
   return (dispatch) => {
-    dispatch(actions.googleSignOut())
-
     if (!googleAuth) {
       // 認証前にサインアウトボタンが押される可能性もあるため
       return
     }
     googleAuth.signOut()
+
+    batch(() => {
+      dispatch(actions.googleSignOut())
+
+      dispatch(
+        logOperations.addLog({
+          action: "YouTube 認証情報削除完了",
+          detail: "",
+        })
+      )
+    })
   }
 }

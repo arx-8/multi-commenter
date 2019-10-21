@@ -5,6 +5,7 @@ import {
   extractVideoIdByURL,
   extractYouTubeActiveLive,
 } from "src/domain/models/Google"
+import { logOperations } from "src/store/log"
 import { AppThunkAction } from "src/types/ReduxTypes"
 import * as actions from "./actions"
 
@@ -33,6 +34,13 @@ export const fetchYouTubeActiveLive = (url: string): AppThunkAction => {
       dispatch(
         actions.fetchYouTubeActiveLive.done({
           result: extractYouTubeActiveLive(resp),
+        })
+      )
+
+      dispatch(
+        logOperations.addLog({
+          action: "YouTube Live 読込完了",
+          detail: "",
         })
       )
     })

@@ -15,6 +15,7 @@ export const ActionTypes = {
   // Google
   GOOGLE_SIGN_IN: "auth/GOOGLE_SIGN_IN",
   GOOGLE_SIGN_OUT: "auth/GOOGLE_SIGN_OUT",
+  GOOGLE_SET_IS_AUTHORIZED: "auth/GOOGLE_SET_IS_AUTHORIZED",
 } as const
 
 const create = actionCreatorFactory(APP_NAME)
@@ -36,4 +37,9 @@ export const twitterSignOut = create(ActionTypes.TWITTER_SIGN_OUT)
 export const googleSignIn = create.async<void, boolean, SerializableError>(
   ActionTypes.GOOGLE_SIGN_IN
 )
+
 export const googleSignOut = create(ActionTypes.GOOGLE_SIGN_OUT)
+
+export const googleSetIsAuthorized = create<boolean>(
+  ActionTypes.GOOGLE_SET_IS_AUTHORIZED
+)

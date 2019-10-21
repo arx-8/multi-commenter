@@ -31,13 +31,14 @@ const columnsDef: Column<LogRecord>[] = [
     headerClassName: "root-header",
     columns: [
       {
-        Header: "操作日時",
+        Header: "日時",
         accessor: "actionDateTime",
-        width: 210,
+        width: 192,
       },
       {
         Header: "操作",
         accessor: "action",
+        width: 192,
       },
       {
         Header: "内容",
