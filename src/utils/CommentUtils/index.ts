@@ -17,6 +17,23 @@ export const countRemaining = (text: string): number => {
   return MAX_LENGTH - getLength(text)
 }
 
+type RemainingStatus = "ok" | "warn" | "error"
+
+/**
+ * 残り文字数の状況をチェックして返す
+ */
+export const checkRemainingStatus = (remainingNum: number): RemainingStatus => {
+  if (remainingNum < 0) {
+    return "error"
+  }
+
+  if (remainingNum < MAX_LENGTH / 2) {
+    return "warn"
+  }
+
+  return "ok"
+}
+
 export const isValidComment = (text: string): boolean => {
   // 空 NG
   if (text.length === 0) {

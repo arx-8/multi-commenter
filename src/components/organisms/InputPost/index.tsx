@@ -1,6 +1,6 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import { Button, TextField, Typography } from "@material-ui/core"
+import { Button, TextField } from "@material-ui/core"
 import EmojiIcon from "@material-ui/icons/EmojiEmotions"
 import SendIcon from "@material-ui/icons/Send"
 import { Editor, EditorState, Modifier } from "draft-js"
@@ -9,6 +9,7 @@ import "emoji-mart/css/emoji-mart.css"
 import React, { useCallback, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
+import { RemainingNumCounter } from "src/components/molecules/RemainingNumCounter"
 import { postOperations } from "src/store/post"
 import { rootSelectors } from "src/store/root"
 import { concatAsTweet, countRemaining } from "src/utils/CommentUtils"
@@ -109,29 +110,29 @@ export const InputPost: React.FC<OwnProps> = () => {
         </IconButtonWithTooltip>
 
         <div css={[separator, actionsRight]}>
-          <Typography css={remainingNumCounter} variant="subtitle2">
-            {`残り ${remainingNum} 文字`}
-          </Typography>
-          <Button
-            css={separatorHorizontal}
-            disabled={!isPostable}
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              dispatch(
-                postOperations.post(
-                  editorState.getCurrentContent().getPlainText(),
-                  tweetSuffix
-                )
-              )
+          <RemainingNumCounter remainingNum={remainingNum} />
 
-              // 初期化
-              setEditorState(EditorState.createEmpty())
-            }}
-          >
-            投稿
-            <SendIcon css={icon} />
-          </Button>
+          <div css={separatorHorizontal}>
+            <Button
+              disabled={!isPostable}
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                dispatch(
+                  postOperations.post(
+                    editorState.getCurrentContent().getPlainText(),
+                    tweetSuffix
+                  )
+                )
+
+                // 初期化
+                setEditorState(EditorState.createEmpty())
+              }}
+            >
+              投稿
+              <SendIcon css={icon} />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -223,10 +224,6 @@ const actionsRight = css`
   display: flex;
   flex-direction: row;
   align-items: center;
-`
-
-const remainingNumCounter = css`
-  color: red;
 `
 
 const separator = css`
