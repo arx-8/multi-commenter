@@ -9,7 +9,7 @@ import { Header } from "src/components/molecules/Header"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
 import { InputPost } from "src/components/organisms/InputPost"
 import { InputUrl } from "src/components/organisms/InputUrl"
-import { Log } from "src/components/organisms/Log"
+import { LogView } from "src/components/organisms/LogView"
 import { PreviewCard } from "src/components/organisms/PreviewCard"
 import { PreviewCardAsSkeleton } from "src/components/organisms/PreviewCardAsSkeleton"
 import { headerIconColor } from "src/components/styles/styles"
@@ -58,7 +58,7 @@ export const Root: React.FC<OwnProps> = () => {
         </div>
 
         <div css={separator}>
-          <Log />
+          <LogView />
         </div>
       </Content>
     </Fragment>
