@@ -32,6 +32,14 @@ module.exports = {
           "Do not declare enums. Use `Plain Object` or `Literal Types` instead.",
       },
     ],
+    "no-restricted-globals": [
+      "error",
+      {
+        name: "Date",
+        message:
+          "Do not call Date directly. Use `DateTimeUtils#getNow` instead.",
+      },
+    ],
     "prefer-const": "error",
     "prettier/prettier": [
       "error",
