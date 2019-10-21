@@ -24,8 +24,11 @@ const initialValues: FormValues = {
 
 const validationSchema = Yup.object().shape<FormValues>({
   url: Yup.string()
-    .url("正しいURLを入力してください")
-    .required("YouTube LiveのURLを入力してください"),
+    .required("YouTube LiveのURLを入力してください")
+    .matches(
+      /^https:\/\/www\.youtube\.com\/watch.+/,
+      "YouTube LiveのURLを入力してください"
+    ),
 })
 
 const useStyles = makeStyles(() =>
