@@ -1,4 +1,9 @@
-import { countRemaining, getLength, isValidComment } from "."
+import {
+  checkRemainingStatus,
+  countRemaining,
+  getLength,
+  isValidComment,
+} from "."
 
 describe("getLength", () => {
   it("exact", () => {
@@ -24,6 +29,16 @@ describe("countRemaining", () => {
         "aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa.aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa."
       )
     ).toStrictEqual(0)
+  })
+})
+
+describe("checkRemainingStatus", () => {
+  it("exact", () => {
+    expect.hasAssertions()
+    expect(checkRemainingStatus(100)).toStrictEqual("ok")
+    expect(checkRemainingStatus(99)).toStrictEqual("warn")
+    expect(checkRemainingStatus(0)).toStrictEqual("warn")
+    expect(checkRemainingStatus(-1)).toStrictEqual("error")
   })
 })
 

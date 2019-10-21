@@ -22,3 +22,8 @@ type AuthAllowed = {
 type AuthDenied = {
   denied: string
 }
+
+/**
+ * ツイート本文
+ */
+export type TweetText = Brand<string, "TweetText">

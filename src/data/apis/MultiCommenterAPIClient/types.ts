@@ -27,3 +27,18 @@ export type CreateAccessTokensResponse = {
   access_token_key: TwitterAccessTokenKey
   access_token_secret: TwitterAccessTokenSecret
 }
+
+export type PostTweetRequestParams = {
+  access_token_key: TwitterAccessTokenKey
+  access_token_secret: TwitterAccessTokenSecret
+  tweet: string
+}
+
+export type PostTweetResponse = {
+  result: "succeeded"
+}
+
+export type PostTweetResponseFailed = {
+  code: number
+  message: string
+}[]

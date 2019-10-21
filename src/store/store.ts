@@ -19,12 +19,14 @@ import { createSerializableStateInvariantMiddleware } from "redux-starter-kit"
 import thunkMiddleWare from "redux-thunk"
 import { isDevelopment } from "src/constants/Env"
 import { authReducer, AuthState } from "src/store/auth"
+import { postReducer, PostState } from "src/store/post"
 import { settingsReducer, SettingsState } from "src/store/settings"
 
 export const history = createBrowserHistory()
 
 export type RootState = Readonly<{
   auth: AuthState
+  post: PostState
   router: RouterState
   settings: SettingsState
 }>
@@ -34,6 +36,7 @@ export const configureStore = (
 ): Store<RootState, AnyAction> => {
   const rootReducer = combineReducers<RootState>({
     auth: authReducer,
+    post: postReducer,
     router: connectRouter(history),
     settings: settingsReducer,
   })

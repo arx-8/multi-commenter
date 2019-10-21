@@ -1,18 +1,21 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
-import { Button, TextField, Typography } from "@material-ui/core"
+import { Button, CircularProgress, TextField } from "@material-ui/core"
 import EmojiIcon from "@material-ui/icons/EmojiEmotions"
 import SendIcon from "@material-ui/icons/Send"
 import { Editor, EditorState, Modifier } from "draft-js"
 import { EmojiData, Picker } from "emoji-mart"
 import "emoji-mart/css/emoji-mart.css"
 import React, { useCallback, useState } from "react"
+import { useDispatch, useSelector } from "react-redux"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
-import { countRemaining } from "src/utils/CommentUtils"
+import { RemainingNumCounter } from "src/components/molecules/RemainingNumCounter"
+import { postOperations, postSelectors } from "src/store/post"
+import { rootSelectors } from "src/store/root"
+import { concatAsTweet, countRemaining } from "src/utils/CommentUtils"
 
 type OwnProps = {
   children?: never
-  onChange: (value: string) => void
 }
 
 /**
@@ -20,7 +23,11 @@ type OwnProps = {
  * そのため、少し複雑化している
  * state を使っている理由は、テキスト入力はなるべく速くできた方がよいため
  */
-export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
+export const InputPost: React.FC<OwnProps> = () => {
+  const dispatch = useDispatch()
+  const isReadyToPost = useSelector(rootSelectors.isReadyToPost)
+  const isPosting = useSelector(postSelectors.isPosting)
+
   // showPicker
   const [showPicker, setShowPicker] = useState(false)
   const toggleShowPicker = useCallback((): void => {
@@ -48,26 +55,31 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
         "insert-characters"
       )
       setEditorState(next)
-
-      // send to parent component
-      onChange(next.getCurrentContent().getPlainText())
     },
-    [editorState, onChange]
+    [editorState]
   )
 
   // tweet suffix
   const [tweetSuffix, setTweetSuffix] = useState("")
 
+  const remainingNum = countRemaining(
+    concatAsTweet(editorState.getCurrentContent().getPlainText(), tweetSuffix)
+  )
+
+  const isPostable = checkIsPostable(
+    editorState.getCurrentContent().getPlainText(),
+    isReadyToPost,
+    remainingNum
+  )
+
   return (
     <div css={root}>
-      <div css={editor}>
+      <div css={[editor, isPosting && disabledInput]}>
         <Editor
+          readOnly={isPosting}
           editorState={editorState}
           onChange={(editorState) => {
             setEditorState(editorState)
-
-            // send to parent component
-            onChange(editorState.getCurrentContent().getPlainText())
           }}
           placeholder="メッセージを入力..."
         />
@@ -75,6 +87,8 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
 
       <div css={separator}>
         <TextField
+          css={isPosting && disabledInput}
+          disabled={isPosting}
           fullWidth
           InputLabelProps={{
             shrink: true,
@@ -100,25 +114,32 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
         </IconButtonWithTooltip>
 
         <div css={[separator, actionsRight]}>
-          <Typography css={remainingNumCounter} variant="subtitle2">
-            {/* TODO count as twitter-text */}
-            残り{" "}
-            {countRemaining(
-              editorState.getCurrentContent().getPlainText() + " " + tweetSuffix
-            )}{" "}
-            文字
-          </Typography>
-          <Button
-            css={separatorHorizontal}
-            variant="contained"
-            color="primary"
-            onClick={() => {
-              console.log("TODO")
-            }}
-          >
-            投稿
-            <SendIcon css={icon} />
-          </Button>
+          <RemainingNumCounter remainingNum={remainingNum} />
+
+          <div css={separatorHorizontal}>
+            <Button
+              disabled={!isPostable}
+              variant="contained"
+              color="primary"
+              onClick={() => {
+                dispatch(
+                  postOperations.post(
+                    editorState.getCurrentContent().getPlainText(),
+                    tweetSuffix
+                  )
+                )
+
+                // 初期化
+                setEditorState(EditorState.createEmpty())
+              }}
+            >
+              投稿
+              {isPosting && (
+                <CircularProgress css={isPostingCircular} size={32} />
+              )}
+              <SendIcon css={icon} />
+            </Button>
+          </div>
         </div>
       </div>
 
@@ -154,6 +175,31 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
   )
 }
 
+/**
+ * 投稿できる状態か？
+ */
+const checkIsPostable = (
+  main: string,
+  isReadyToPost: boolean,
+  remainingNum: number
+): boolean => {
+  if (!isReadyToPost) {
+    return false
+  }
+
+  // suffix はオプションなため、なくてもいい
+  if (main.length === 0) {
+    return false
+  }
+
+  // 文字数超過
+  if (remainingNum < 0) {
+    return false
+  }
+
+  return true
+}
+
 const root = css``
 
 const editor = css`
@@ -187,10 +233,6 @@ const actionsRight = css`
   align-items: center;
 `
 
-const remainingNumCounter = css`
-  color: red;
-`
-
 const separator = css`
   margin-top: 8px;
 `
@@ -202,4 +244,12 @@ const separatorHorizontal = css`
 const icon = css`
   display: flex;
   padding-left: 8px;
+`
+
+const disabledInput = css`
+  background-color: lightgray;
+`
+
+const isPostingCircular = css`
+  position: absolute;
 `
