@@ -1,5 +1,6 @@
 import {
   checkRemainingStatus,
+  concatAsTweet,
   countRemaining,
   getLength,
   isValidComment,
@@ -39,6 +40,33 @@ describe("checkRemainingStatus", () => {
     expect(checkRemainingStatus(99)).toStrictEqual("warn")
     expect(checkRemainingStatus(0)).toStrictEqual("warn")
     expect(checkRemainingStatus(-1)).toStrictEqual("error")
+  })
+})
+
+describe("concatAsTweet", () => {
+  it("exact", () => {
+    expect.hasAssertions()
+    expect(concatAsTweet("main", "suffix")).toStrictEqual("main suffix")
+    expect(
+      concatAsTweet(
+        `末尾改行の場合
+`,
+        "#twitter"
+      )
+    ).toStrictEqual(`末尾改行の場合
+#twitter`)
+    expect(
+      concatAsTweet(
+        `final new line
+
+
+`,
+        "#twitter"
+      )
+    ).toStrictEqual(`final new line
+
+
+#twitter`)
   })
 })
 
