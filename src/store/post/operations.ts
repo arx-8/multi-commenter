@@ -1,31 +1,73 @@
+import { postLiveChatMessage } from "src/data/apis/GoogleAPIClient"
+import { postTweet } from "src/data/apis/MultiCommenterAPIClient"
 import { toSerializableError } from "src/domain/errors/SerializableError"
+import { TweetText } from "src/domain/models/Twitter"
 import { AppThunkAction } from "src/types/ReduxTypes"
+import { concatAsTweet } from "src/utils/CommentUtils"
 import * as actions from "./actions"
 
-export const post = (): AppThunkAction => {
-  return async (dispatch) => {
-    dispatch(actions.post.started())
+export const post = (main: string, suffix: string): AppThunkAction<void> => {
+  return (dispatch) => {
+    dispatch(postTweetRequest(concatAsTweet(main, suffix)))
+    dispatch(postYouTubeLiveChatRequest(main))
+  }
+}
 
-    // let resp
+const postTweetRequest = (message: TweetText): AppThunkAction => {
+  return async (dispatch, getState) => {
+    const accessTokens = getState().auth.twitter.accessTokens
+    if (!accessTokens) {
+      throw new Error("Twitter auth required.")
+    }
+
+    dispatch(actions.postTweet.started())
+
     try {
-      // resp = await fetchVideoData({
-      //   videoId: extractVideoIdByURL(url),
-      // })
+      await postTweet({
+        access_token_key: accessTokens.access_token_key,
+        access_token_secret: accessTokens.access_token_secret,
+        tweet: message,
+      })
     } catch (error) {
       console.log(error)
 
       dispatch(
-        actions.post.failed({
+        actions.postTweet.failed({
           error: toSerializableError(error),
         })
       )
       return
     }
 
-    // dispatch(
-    //   actions.post.done({
-    //     result: undefined
-    //   })
-    // )
+    dispatch(actions.postTweet.done({}))
+  }
+}
+
+const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
+  return async (dispatch, getState) => {
+    const youTubeData = getState().settings.youTubeData
+    if (!youTubeData) {
+      throw new Error("YouTube data required.")
+    }
+
+    dispatch(actions.postYouTubeLiveChat.started())
+
+    try {
+      await postLiveChatMessage({
+        liveChatId: youTubeData.activeLiveChatId,
+        messageText: message,
+      })
+    } catch (error) {
+      console.log(error)
+
+      dispatch(
+        actions.postYouTubeLiveChat.failed({
+          error: toSerializableError(error),
+        })
+      )
+      return
+    }
+
+    dispatch(actions.postYouTubeLiveChat.done({}))
   }
 }

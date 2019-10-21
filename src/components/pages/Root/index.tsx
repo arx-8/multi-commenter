@@ -53,11 +53,7 @@ export const Root: React.FC<OwnProps> = () => {
         </div>
 
         <div css={inputPost}>
-          <InputPost
-            onChange={(text) => {
-              console.log(text)
-            }}
-          />
+          <InputPost />
         </div>
       </Content>
     </Fragment>

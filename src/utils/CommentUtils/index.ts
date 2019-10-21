@@ -1,3 +1,4 @@
+import { TweetText } from "src/domain/models/Twitter"
 import twitter from "twitter-text"
 
 /**
@@ -28,4 +29,9 @@ export const isValidComment = (text: string): boolean => {
   }
 
   return 0 < countRemaining(text)
+}
+
+export const concatAsTweet = (main: string, suffix: string): TweetText => {
+  // ハッシュタグなどがくっついてしまわないよう、半角スペースを空けている
+  return `${main} ${suffix}` as TweetText
 }

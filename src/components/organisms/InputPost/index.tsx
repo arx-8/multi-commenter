@@ -7,12 +7,13 @@ import { Editor, EditorState, Modifier } from "draft-js"
 import { EmojiData, Picker } from "emoji-mart"
 import "emoji-mart/css/emoji-mart.css"
 import React, { useCallback, useState } from "react"
+import { useDispatch } from "react-redux"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
-import { countRemaining } from "src/utils/CommentUtils"
+import { postOperations } from "src/store/post"
+import { concatAsTweet, countRemaining } from "src/utils/CommentUtils"
 
 type OwnProps = {
   children?: never
-  onChange: (value: string) => void
 }
 
 /**
@@ -20,7 +21,9 @@ type OwnProps = {
  * そのため、少し複雑化している
  * state を使っている理由は、テキスト入力はなるべく速くできた方がよいため
  */
-export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
+export const InputPost: React.FC<OwnProps> = () => {
+  const dispatch = useDispatch()
+
   // showPicker
   const [showPicker, setShowPicker] = useState(false)
   const toggleShowPicker = useCallback((): void => {
@@ -48,11 +51,8 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
         "insert-characters"
       )
       setEditorState(next)
-
-      // send to parent component
-      onChange(next.getCurrentContent().getPlainText())
     },
-    [editorState, onChange]
+    [editorState]
   )
 
   // tweet suffix
@@ -65,9 +65,6 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
           editorState={editorState}
           onChange={(editorState) => {
             setEditorState(editorState)
-
-            // send to parent component
-            onChange(editorState.getCurrentContent().getPlainText())
           }}
           placeholder="メッセージを入力..."
         />
@@ -101,10 +98,12 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
 
         <div css={[separator, actionsRight]}>
           <Typography css={remainingNumCounter} variant="subtitle2">
-            {/* TODO count as twitter-text */}
             残り{" "}
             {countRemaining(
-              editorState.getCurrentContent().getPlainText() + " " + tweetSuffix
+              concatAsTweet(
+                editorState.getCurrentContent().getPlainText(),
+                tweetSuffix
+              )
             )}{" "}
             文字
           </Typography>
@@ -113,7 +112,15 @@ export const InputPost: React.FC<OwnProps> = ({ onChange }) => {
             variant="contained"
             color="primary"
             onClick={() => {
-              console.log("TODO")
+              dispatch(
+                postOperations.post(
+                  editorState.getCurrentContent().getPlainText(),
+                  tweetSuffix
+                )
+              )
+
+              // 初期化
+              setEditorState(EditorState.createEmpty())
             }}
           >
             投稿

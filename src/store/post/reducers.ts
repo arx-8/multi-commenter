@@ -5,7 +5,11 @@ import * as actions from "./actions"
 
 export type State = Readonly<{
   ui: {
-    post: {
+    postTweet: {
+      isLoading: boolean
+      errorMsg: string
+    }
+    postYouTubeLiveChat: {
       isLoading: boolean
       errorMsg: string
     }
@@ -14,7 +18,11 @@ export type State = Readonly<{
 
 export const initialState: State = {
   ui: {
-    post: {
+    postTweet: {
+      isLoading: false,
+      errorMsg: "",
+    },
+    postYouTubeLiveChat: {
       isLoading: false,
       errorMsg: "",
     },
@@ -25,22 +33,47 @@ export const reducer: Reducer<State, Action> = (
   state = initialState,
   action
 ) => {
-  if (isType(action, actions.post.started)) {
+  /**
+   * postTweet
+   */
+  if (isType(action, actions.postTweet.started)) {
     return produce(state, (draft) => {
-      draft.ui.post.isLoading = true
-      draft.ui.post.errorMsg = ""
+      draft.ui.postTweet.isLoading = true
+      draft.ui.postTweet.errorMsg = ""
     })
   }
-  if (isType(action, actions.post.done)) {
+  if (isType(action, actions.postTweet.done)) {
     return produce(state, (draft) => {
-      draft.ui.post.isLoading = false
-      draft.ui.post.errorMsg = ""
+      draft.ui.postTweet.isLoading = false
+      draft.ui.postTweet.errorMsg = ""
     })
   }
-  if (isType(action, actions.post.failed)) {
+  if (isType(action, actions.postTweet.failed)) {
     return produce(state, (draft) => {
-      draft.ui.post.isLoading = false
-      draft.ui.post.errorMsg = action.payload.error.message
+      draft.ui.postTweet.isLoading = false
+      draft.ui.postTweet.errorMsg = action.payload.error.message
+    })
+  }
+
+  /**
+   * postYouTubeLiveChat
+   */
+  if (isType(action, actions.postYouTubeLiveChat.started)) {
+    return produce(state, (draft) => {
+      draft.ui.postYouTubeLiveChat.isLoading = true
+      draft.ui.postYouTubeLiveChat.errorMsg = ""
+    })
+  }
+  if (isType(action, actions.postYouTubeLiveChat.done)) {
+    return produce(state, (draft) => {
+      draft.ui.postYouTubeLiveChat.isLoading = false
+      draft.ui.postYouTubeLiveChat.errorMsg = ""
+    })
+  }
+  if (isType(action, actions.postYouTubeLiveChat.failed)) {
+    return produce(state, (draft) => {
+      draft.ui.postYouTubeLiveChat.isLoading = false
+      draft.ui.postYouTubeLiveChat.errorMsg = action.payload.error.message
     })
   }
 
