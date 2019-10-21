@@ -3,8 +3,10 @@ import { css, jsx } from "@emotion/core"
 import { createStyles, makeStyles, Paper } from "@material-ui/core"
 import { Form, Formik } from "formik"
 import React from "react"
+import { useSelector } from "react-redux"
 import { InnerInput } from "src/components/organisms/InputUrl/InnerInput"
 import { SubmitButton } from "src/components/organisms/InputUrl/SubmitButton"
+import { authSelectors } from "src/store/auth"
 import * as Yup from "yup"
 
 type OwnProps = {
@@ -42,6 +44,7 @@ const useStyles = makeStyles(() =>
 
 export const InputUrl: React.FC<OwnProps> = ({ onSubmit }) => {
   const classes = useStyles()
+  const isAllAuthorized = useSelector(authSelectors.isAllAuthorized)
 
   return (
     <Formik
@@ -53,8 +56,9 @@ export const InputUrl: React.FC<OwnProps> = ({ onSubmit }) => {
       validateOnChange
     >
       <Form css={root}>
-        <Paper className={classes.root}>
+        <Paper className={classes.root} css={!isAllAuthorized && disabledInput}>
           <InnerInput
+            disabled={!isAllAuthorized}
             name="url"
             placeholder="https://www.youtube.com/watch?v=xxx"
             inputProps={{ "aria-label": "Open URL" }}
@@ -62,7 +66,9 @@ export const InputUrl: React.FC<OwnProps> = ({ onSubmit }) => {
               root: classes.inputRoot,
             }}
           />
-          <SubmitButton />
+          <span css={!isAllAuthorized && disabledInput}>
+            <SubmitButton disabled={!isAllAuthorized} />
+          </span>
         </Paper>
       </Form>
     </Formik>
@@ -71,4 +77,8 @@ export const InputUrl: React.FC<OwnProps> = ({ onSubmit }) => {
 
 const root = css`
   flex-grow: 1;
+`
+
+const disabledInput = css`
+  background-color: lightgray !important;
 `
