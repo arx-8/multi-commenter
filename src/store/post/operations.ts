@@ -68,6 +68,9 @@ const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
     if (!youTubeData) {
       throw new Error("YouTube data required.")
     }
+    if (!("activeLiveChatId" in youTubeData)) {
+      throw new Error("No Live can not post chat.")
+    }
 
     dispatch(actions.postYouTubeLiveChat.started())
 

@@ -34,7 +34,6 @@ type YouTubeAPIClientError = {
 export const toSerializableErrorFromYouTubeAPIClientError = (
   error: YouTubeAPIClientError
 ): SerializableError => {
-  console.log(error)
   return {
     message: error.result.error.message,
     name: "YouTubeAPIClientError",

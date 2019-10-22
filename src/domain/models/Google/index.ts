@@ -17,16 +17,25 @@ export type YouTubeActiveLiveChatId = Brand<string, "YouTubeActiveLiveChatId">
 const QUERY_STRING_EXTRACTOR = /.+\?/
 
 export const extractVideoIdByURL = (url: string): YouTubeVideoId => {
-  // ?より手前を取り払わないと正しく動作しないため
+  // ?より手前を取り除かないと正しく動作しないため
   const params = parse(url.replace(QUERY_STRING_EXTRACTOR, ""))
   return params["v"] as YouTubeVideoId
 }
 
 /**
- * 有効な YouTube Live のデータ
+ * 有効な YouTube Live 動画のデータ
  */
-export type YouTubeActiveLive = {
+export type YouTubeActiveLiveVideo = {
   activeLiveChatId: YouTubeActiveLiveChatId
+  description: string
+  thumbnailUrl: string
+  title: string
+}
+
+/**
+ * Live じゃない、ただの YouTube 動画のデータ
+ */
+export type YouTubeVideo = {
   description: string
   thumbnailUrl: string
   title: string
@@ -39,7 +48,7 @@ const sizeList = ["maxres", "high", "medium", "standard", "default"] as const
 
 export const extractYouTubeActiveLive = (
   response: gapi.client.youtube.VideoListResponse
-): YouTubeActiveLive | undefined => {
+): YouTubeActiveLiveVideo | YouTubeVideo | undefined => {
   // 必ず 1 件の動画を読み込んでいるため、決め打ち
   if (!response.items || response.items.length === 0) {
     return undefined
@@ -47,14 +56,11 @@ export const extractYouTubeActiveLive = (
   const data = response.items[0]
 
   // activeLiveChatId
-  if (
-    !data.liveStreamingDetails ||
-    !data.liveStreamingDetails.activeLiveChatId
-  ) {
-    return undefined
+  let activeLiveChatId
+  if (data.liveStreamingDetails && data.liveStreamingDetails.activeLiveChatId) {
+    activeLiveChatId = data.liveStreamingDetails
+      .activeLiveChatId as YouTubeActiveLiveChatId
   }
-  const activeLiveChatId = data.liveStreamingDetails
-    .activeLiveChatId as YouTubeActiveLiveChatId
 
   // thumbnail
   if (!data.snippet || !data.snippet.thumbnails) {
@@ -64,11 +70,19 @@ export const extractYouTubeActiveLive = (
   const maxSize = sizeList.find((s) => thumbnails[s])!
   const thumbnailUrl = thumbnails[maxSize]!.url!
 
-  return {
-    activeLiveChatId,
-    thumbnailUrl,
-    // thumb があればあるだろうから!
-    description: data.snippet.description!,
-    title: data.snippet.title!,
+  if (activeLiveChatId) {
+    return {
+      activeLiveChatId,
+      thumbnailUrl,
+      // thumb があればあるだろうから!
+      description: data.snippet.description!,
+      title: data.snippet.title!,
+    }
+  } else {
+    return {
+      thumbnailUrl,
+      description: data.snippet.description!,
+      title: data.snippet.title!,
+    }
   }
 }
