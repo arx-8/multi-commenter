@@ -1,3 +1,4 @@
+import { HTTPError } from "ky"
 import { batch } from "react-redux"
 import {
   postLiveChatMessage,
@@ -5,13 +6,17 @@ import {
 } from "src/data/apis/GoogleAPIClient"
 import { postTweet } from "src/data/apis/MultiCommenterAPIClient"
 import {
-  toSerializableError,
+  toSerializableErrorByKyError,
   toSerializableErrorFromYouTubeAPIClientError,
 } from "src/domain/errors/SerializableError"
 import { extractVideoIdByURL } from "src/domain/models/Google"
-import { TweetText } from "src/domain/models/Twitter"
+import {
+  TweetText,
+  TwitterApiInvalidOrExpiredTokenError,
+} from "src/domain/models/Twitter"
 import { logOperations } from "src/store/log"
 import { AppThunkAction } from "src/types/ReduxTypes"
+import { FixMeAny } from "src/types/Utils"
 import { concatAsTweet } from "src/utils/CommentUtils"
 import * as actions from "./actions"
 
@@ -37,17 +42,40 @@ const postTweetRequest = (message: TweetText): AppThunkAction => {
         access_token_secret: accessTokens.access_token_secret,
         tweet: message,
       })
-    } catch (error) {
-      const e = toSerializableError(error)
-      console.warn(e)
+    } catch (_error) {
+      const error: HTTPError = _error
+      console.warn(error)
+      const res:
+        | TwitterApiInvalidOrExpiredTokenError
+        | Record<string, FixMeAny> = await error.response.json()
 
-      dispatch(
-        logOperations.addLog({
-          action: "Twitter の投稿に失敗",
-          detail: e.message,
-          noticeStatus: "error",
-        })
-      )
+      const e = toSerializableErrorByKyError(error, JSON.stringify(res))
+
+      // レートリミットエラー？の場合に、非常に不親切なエラーメッセージが返るため
+      if (
+        Array.isArray(res) &&
+        res.length === 1 &&
+        res[0].message.includes("Invalid or expired token.")
+      ) {
+        dispatch(
+          logOperations.addLog({
+            action: "Twitter の投稿に失敗",
+            detail:
+              e.message +
+              " Twitter APIの上限超過の可能性があります。1分程度後に再投稿して下さい。同じエラーが続く場合、認証情報を削除、再認証してください。",
+            noticeStatus: "error",
+          })
+        )
+      } else {
+        dispatch(
+          logOperations.addLog({
+            action: "Twitter の投稿に失敗",
+            detail: e.message,
+            noticeStatus: "error",
+          })
+        )
+      }
+
       dispatch(actions.postTweet.failed({ error: e }))
       return
     }
@@ -84,8 +112,8 @@ const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
         messageText: message,
       })
     } catch (error) {
+      console.warn(error)
       const e = toSerializableErrorFromYouTubeAPIClientError(error)
-      console.warn(e)
 
       dispatch(
         logOperations.addLog({
@@ -122,8 +150,8 @@ export const postRateLikeRequest = (): AppThunkAction => {
     try {
       await postRateLike(extractVideoIdByURL(youTubeUrl))
     } catch (error) {
+      console.warn(error)
       const e = toSerializableErrorFromYouTubeAPIClientError(error)
-      console.warn(e)
 
       dispatch(
         logOperations.addLog({

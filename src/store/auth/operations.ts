@@ -16,7 +16,10 @@ import {
   createOAuthTokens,
 } from "src/data/apis/MultiCommenterAPIClient"
 import { CreateAccessTokensResponse } from "src/data/apis/MultiCommenterAPIClient/types"
-import { toSerializableError } from "src/domain/errors/SerializableError"
+import {
+  toSerializableError,
+  toSerializableErrorByKyError,
+} from "src/domain/errors/SerializableError"
 import { TwitterOauthVerifier } from "src/domain/models/Twitter"
 import { authSelectors } from "src/store/auth"
 import { logOperations } from "src/store/log"
@@ -106,8 +109,8 @@ export const twitterSignIn = (): AppThunkAction => {
         callback_url: TWITTER_CALLBACK_URL,
       })
     } catch (error) {
-      const e = toSerializableError(error)
-      console.warn(e)
+      console.warn(error)
+      const e = toSerializableErrorByKyError(error, await error.response.text())
 
       dispatch(
         logOperations.addLog({
@@ -162,8 +165,8 @@ export const twitterSignInFinalize = (
         oauth_verifier: oauthTokenVerifier,
       })
     } catch (error) {
-      const e = toSerializableError(error)
-      console.warn(e)
+      console.warn(error)
+      const e = toSerializableErrorByKyError(error, await error.response.text())
 
       dispatch(
         logOperations.addLog({
@@ -253,8 +256,8 @@ export const googleSignIn = (): AppThunkAction => {
     try {
       await googleAuth.signIn()
     } catch (error) {
+      console.warn(error)
       const e = toSerializableError(error)
-      console.warn(e)
 
       dispatch(
         logOperations.addLog({

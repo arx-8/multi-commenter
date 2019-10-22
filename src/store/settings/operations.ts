@@ -19,8 +19,8 @@ export const fetchYouTubeActiveLive = (url: string): AppThunkAction => {
         videoId: extractVideoIdByURL(url),
       })
     } catch (error) {
+      console.warn(error)
       const e = toSerializableErrorFromYouTubeAPIClientError(error)
-      console.warn(e)
 
       dispatch(
         logOperations.addLog({
