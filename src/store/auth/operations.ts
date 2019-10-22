@@ -42,27 +42,42 @@ export const initAndCheck = (): AppThunkAction => {
       actions.googleSetIsAuthorized(false)
     }
 
-    let detailMsg = ""
     const rootState = getState()
     if (authSelectors.isAuthorizedTwitter(rootState)) {
-      detailMsg += "Twitter認証済み"
+      dispatch(
+        logOperations.addLog({
+          action: "初期化完了",
+          detail: "Twitter 認証済み",
+          noticeStatus: "ok",
+        })
+      )
     } else {
-      detailMsg += "Twitter未認証"
-    }
-    detailMsg += ", "
-    if (rootState.auth.google.isAuthorized) {
-      detailMsg += "YouTube認証済み"
-    } else {
-      detailMsg += "YouTube未認証"
+      dispatch(
+        logOperations.addLog({
+          action: "初期化完了(未認証)",
+          detail: "Twitter 未認証",
+          noticeStatus: "warn",
+        })
+      )
     }
 
-    dispatch(
-      logOperations.addLog({
-        action: "初期化完了",
-        detail: detailMsg,
-        noticeStatus: "ok",
-      })
-    )
+    if (rootState.auth.google.isAuthorized) {
+      dispatch(
+        logOperations.addLog({
+          action: "初期化完了",
+          detail: "YouTube 認証済み",
+          noticeStatus: "ok",
+        })
+      )
+    } else {
+      dispatch(
+        logOperations.addLog({
+          action: "初期化完了(未認証)",
+          detail: "YouTube 未認証",
+          noticeStatus: "warn",
+        })
+      )
+    }
   }
 }
 
