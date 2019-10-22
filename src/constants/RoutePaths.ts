@@ -3,6 +3,7 @@
  */
 export const RoutePath = {
   Root: "/",
+  Help: "/help",
   Settings: "/settings",
   TwitterAuthCallback: "/twitter-auth-callback",
 }
