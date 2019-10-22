@@ -2,7 +2,10 @@ import {
   FetchVideoDataRequestParams,
   PostLiveChatMessageRequestParams,
 } from "src/data/apis/GoogleAPIClient/types"
-import { YouTubeActiveLiveChatId } from "src/domain/models/Google"
+import {
+  YouTubeActiveLiveChatId,
+  YouTubeVideoId,
+} from "src/domain/models/Google"
 import { CastAny } from "src/types/Utils"
 
 /**
@@ -60,4 +63,13 @@ export const postLiveChatMessage = async (
 
   const resp = await getYouTubeAPIClient().liveChatMessages.insert(request)
   return resp.result
+}
+
+export const postRateLike = async (
+  youTubeVideoId: YouTubeVideoId
+): Promise<void> => {
+  await getYouTubeAPIClient().videos.rate({
+    id: youTubeVideoId,
+    rating: "like",
+  })
 }

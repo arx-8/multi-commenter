@@ -7,3 +7,9 @@ export const headerIconColor = css`
 export const logoColorTwitter = "#1da1f2"
 
 export const logoColorYouTube = "#ff0000"
+
+export const warnColor = "darkorange"
+
+export const errorColor = "red"
+
+export const likedColor = "#065fd4"

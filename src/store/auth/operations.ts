@@ -62,10 +62,21 @@ export const initAndCheck = (): AppThunkAction => {
     }
 
     if (rootState.auth.google.isAuthorized) {
+      // メインアカウントとブランドアカウント、どっちで連携認証したかわかりづらいため
+      // (例えば、「ブランドアカウント」で LIKE 、「メインアカウント」で見たら反映されてない・・・とかがある)
+      // TODO 使用アイコンなり出さないと、Twitterもわからん
+      if (!googleAuth) {
+        throw new Error("Initialize before call operations")
+      }
+      const name = googleAuth.currentUser
+        .get()
+        .getBasicProfile()
+        .getName()
+
       dispatch(
         logOperations.addLog({
           action: "初期化完了",
-          detail: "YouTube 認証済み",
+          detail: `YouTube 認証済み (Name: ${name})`,
           noticeStatus: "ok",
         })
       )
