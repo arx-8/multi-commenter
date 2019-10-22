@@ -48,6 +48,7 @@ const postTweetRequest = (message: TweetText): AppThunkAction => {
         logOperations.addLog({
           action: "Twitter に投稿",
           detail: message,
+          noticeStatus: "ok",
         })
       )
     })
@@ -86,6 +87,7 @@ const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
         logOperations.addLog({
           action: "YouTube Chat に投稿",
           detail: message,
+          noticeStatus: "ok",
         })
       )
     })

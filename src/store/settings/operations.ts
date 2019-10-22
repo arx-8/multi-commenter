@@ -41,6 +41,7 @@ export const fetchYouTubeActiveLive = (url: string): AppThunkAction => {
         logOperations.addLog({
           action: "YouTube Live 読込完了",
           detail: "",
+          noticeStatus: "ok",
         })
       )
     })

@@ -4,6 +4,7 @@ import React from "react"
 import { useSelector } from "react-redux"
 import ReactTable, { Column } from "react-table"
 import "react-table/react-table.css"
+import { CellOfAction } from "src/components/organisms/LogView/CellOfAction"
 import { LogRecord } from "src/domain/models/Log"
 import { RootState } from "src/store/store"
 
@@ -37,8 +38,8 @@ const columnsDef: Column<LogRecord>[] = [
       },
       {
         Header: "操作",
-        accessor: "action",
         width: 192,
+        Cell: CellOfAction,
       },
       {
         Header: "内容",

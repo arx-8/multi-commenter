@@ -29,6 +29,7 @@ export const initAndCheck = (): AppThunkAction => {
       logOperations.addLog({
         action: "初期化中",
         detail: "",
+        noticeStatus: "ok",
       })
     )
 
@@ -59,6 +60,7 @@ export const initAndCheck = (): AppThunkAction => {
       logOperations.addLog({
         action: "初期化完了",
         detail: detailMsg,
+        noticeStatus: "ok",
       })
     )
   }
@@ -154,6 +156,7 @@ export const twitterSignInFinalize = (
         logOperations.addLog({
           action: "Twitter 認証完了",
           detail: "",
+          noticeStatus: "ok",
         })
       )
     })
@@ -169,6 +172,7 @@ export const twitterSignOut = (): AppThunkAction<void> => {
         logOperations.addLog({
           action: "Twitter 認証情報削除完了",
           detail: "",
+          noticeStatus: "ok",
         })
       )
     })
@@ -241,6 +245,7 @@ export const googleSignIn = (): AppThunkAction => {
         logOperations.addLog({
           action: "YouTube 認証完了",
           detail: "",
+          noticeStatus: "ok",
         })
       )
     })
@@ -262,6 +267,7 @@ export const googleSignOut = (): AppThunkAction<void> => {
         logOperations.addLog({
           action: "YouTube 認証情報削除完了",
           detail: "",
+          noticeStatus: "ok",
         })
       )
     })
