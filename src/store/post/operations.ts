@@ -1,10 +1,14 @@
 import { batch } from "react-redux"
-import { postLiveChatMessage } from "src/data/apis/GoogleAPIClient"
+import {
+  postLiveChatMessage,
+  postRateLike,
+} from "src/data/apis/GoogleAPIClient"
 import { postTweet } from "src/data/apis/MultiCommenterAPIClient"
 import {
   toSerializableError,
   toSerializableErrorFromYouTubeAPIClientError,
 } from "src/domain/errors/SerializableError"
+import { extractVideoIdByURL } from "src/domain/models/Google"
 import { TweetText } from "src/domain/models/Twitter"
 import { logOperations } from "src/store/log"
 import { AppThunkAction } from "src/types/ReduxTypes"
@@ -105,5 +109,39 @@ const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
         })
       )
     })
+  }
+}
+
+export const postRateLikeRequest = (): AppThunkAction => {
+  return async (dispatch, getState) => {
+    const youTubeUrl = getState().settings.youTubeUrl
+    if (!youTubeUrl) {
+      throw new Error("YouTube URL required.")
+    }
+
+    try {
+      await postRateLike(extractVideoIdByURL(youTubeUrl))
+    } catch (error) {
+      const e = toSerializableErrorFromYouTubeAPIClientError(error)
+      console.warn(e)
+
+      dispatch(
+        logOperations.addLog({
+          action: "YouTube の評価に失敗",
+          detail: e.message,
+          noticeStatus: "error",
+        })
+      )
+      dispatch(actions.postYouTubeLiveChat.failed({ error: e }))
+      return
+    }
+
+    dispatch(
+      logOperations.addLog({
+        action: "YouTube の評価完了",
+        detail: "[高く評価した動画] に追加されました",
+        noticeStatus: "ok",
+      })
+    )
   }
 }

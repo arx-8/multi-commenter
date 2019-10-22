@@ -13,6 +13,7 @@ import ExpandMoreIcon from "@material-ui/icons/ExpandMore"
 import React, { useState } from "react"
 import { useSelector } from "react-redux"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
+import { LikeButton } from "src/components/organisms/PreviewCard/LikeButton"
 import { RootState } from "src/store/store"
 
 type OwnProps = {
@@ -41,9 +42,12 @@ export const PreviewCard: React.FC<OwnProps> = () => {
         />
       </div>
       <CardContent css={padding}>
-        <Typography gutterBottom variant="h6">
-          {youTubeData.title}
-        </Typography>
+        <span css={titleAndActions}>
+          <Typography gutterBottom variant="h6">
+            {youTubeData.title}
+          </Typography>
+          <LikeButton />
+        </span>
         <Collapse in={isOpenDesc} collapsedHeight="40px">
           <Typography
             css={desc}
@@ -94,6 +98,11 @@ const padding = css`
 const thumb = css`
   height: 100%;
   width: 100%;
+`
+
+const titleAndActions = css`
+  display: flex;
+  justify-content: space-between;
 `
 
 const desc = css`
