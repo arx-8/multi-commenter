@@ -71,7 +71,7 @@ export const fetchYouTubeActiveLive = (url: string): AppThunkAction => {
       } else {
         dispatch(
           logOperations.addLog({
-            action: "YouTube 読込完了 (チャット投稿不可)",
+            action: "YouTube 読込完了(投稿不可)",
             detail: "ライブでないため、チャットの投稿はできません",
             noticeStatus: "warn",
           })

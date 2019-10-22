@@ -22,5 +22,13 @@ export const isReadyToPost = (rootState: RootState): boolean => {
     return false
   }
 
+  // 投稿できる動画か？
+  if (
+    !rootState.settings.youTubeData ||
+    !("activeLiveChatId" in rootState.settings.youTubeData)
+  ) {
+    return false
+  }
+
   return true
 }
