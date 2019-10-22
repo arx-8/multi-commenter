@@ -1,6 +1,6 @@
 import { batch } from "react-redux"
 import { fetchVideoData } from "src/data/apis/GoogleAPIClient"
-import { toSerializableError } from "src/domain/errors/SerializableError"
+import { toSerializableErrorFromYouTubeAPIClientError } from "src/domain/errors/SerializableError"
 import {
   extractVideoIdByURL,
   extractYouTubeActiveLive,
@@ -19,15 +19,22 @@ export const fetchYouTubeActiveLive = (url: string): AppThunkAction => {
         videoId: extractVideoIdByURL(url),
       })
     } catch (error) {
-      console.log(error)
+      const e = toSerializableErrorFromYouTubeAPIClientError(error)
+      console.log(e)
 
       dispatch(
-        actions.fetchYouTubeActiveLive.failed({
-          error: toSerializableError(error),
+        logOperations.addLog({
+          action: "YouTube Live の取得に失敗",
+          detail: e.message,
+          noticeStatus: "error",
         })
       )
+      dispatch(actions.fetchYouTubeActiveLive.failed({ error: e }))
       return
     }
+
+    // 取得結果が想定外（終了済みライブ、存在しない、削除済み etc.）の場合
+    // TODO
 
     batch(() => {
       dispatch(actions.setYouTubeUrl({ url }))

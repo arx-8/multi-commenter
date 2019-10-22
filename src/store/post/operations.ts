@@ -1,7 +1,10 @@
 import { batch } from "react-redux"
 import { postLiveChatMessage } from "src/data/apis/GoogleAPIClient"
 import { postTweet } from "src/data/apis/MultiCommenterAPIClient"
-import { toSerializableError } from "src/domain/errors/SerializableError"
+import {
+  toSerializableError,
+  toSerializableErrorFromYouTubeAPIClientError,
+} from "src/domain/errors/SerializableError"
 import { TweetText } from "src/domain/models/Twitter"
 import { logOperations } from "src/store/log"
 import { AppThunkAction } from "src/types/ReduxTypes"
@@ -31,13 +34,17 @@ const postTweetRequest = (message: TweetText): AppThunkAction => {
         tweet: message,
       })
     } catch (error) {
-      console.log(error)
+      const e = toSerializableError(error)
+      console.log(e)
 
       dispatch(
-        actions.postTweet.failed({
-          error: toSerializableError(error),
+        logOperations.addLog({
+          action: "Twitter の投稿に失敗",
+          detail: e.message,
+          noticeStatus: "error",
         })
       )
+      dispatch(actions.postTweet.failed({ error: e }))
       return
     }
 
@@ -70,13 +77,17 @@ const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
         messageText: message,
       })
     } catch (error) {
-      console.log(error)
+      const e = toSerializableErrorFromYouTubeAPIClientError(error)
+      console.log(e)
 
       dispatch(
-        actions.postYouTubeLiveChat.failed({
-          error: toSerializableError(error),
+        logOperations.addLog({
+          action: "YouTube Chat の投稿に失敗",
+          detail: e.message,
+          noticeStatus: "error",
         })
       )
+      dispatch(actions.postYouTubeLiveChat.failed({ error: e }))
       return
     }
 

@@ -38,7 +38,7 @@ const columnsDef: Column<LogRecord>[] = [
       },
       {
         Header: "操作",
-        width: 192,
+        width: 220,
         Cell: CellOfAction,
       },
       {

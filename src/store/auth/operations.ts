@@ -94,13 +94,17 @@ export const twitterSignIn = (): AppThunkAction => {
         callback_url: TWITTER_CALLBACK_URL,
       })
     } catch (error) {
-      console.log(error)
+      const e = toSerializableError(error)
+      console.log(e)
 
       dispatch(
-        actions.twitterSignIn.failed({
-          error: toSerializableError(error),
+        logOperations.addLog({
+          action: "Twitter 認証失敗",
+          detail: e.message,
+          noticeStatus: "error",
         })
       )
+      dispatch(actions.twitterSignIn.failed({ error: e }))
       return
     }
 
@@ -146,13 +150,17 @@ export const twitterSignInFinalize = (
         oauth_verifier: oauthTokenVerifier,
       })
     } catch (error) {
-      console.log(error)
+      const e = toSerializableError(error)
+      console.log(e)
 
       dispatch(
-        actions.twitterSignInFinalize.failed({
-          error: toSerializableError(error),
+        logOperations.addLog({
+          action: "Twitter 認証失敗",
+          detail: e.message,
+          noticeStatus: "error",
         })
       )
+      dispatch(actions.twitterSignInFinalize.failed({ error: e }))
       return
     }
 
@@ -233,13 +241,17 @@ export const googleSignIn = (): AppThunkAction => {
     try {
       await googleAuth.signIn()
     } catch (error) {
-      console.log(error)
+      const e = toSerializableError(error)
+      console.log(e)
 
       dispatch(
-        actions.googleSignIn.failed({
-          error: toSerializableError(error),
+        logOperations.addLog({
+          action: "YouTube 認証失敗",
+          detail: e.message,
+          noticeStatus: "error",
         })
       )
+      dispatch(actions.googleSignIn.failed({ error: e }))
       return
     }
 
