@@ -57,4 +57,8 @@ const root = css`
   .root-header {
     text-align: left;
   }
+
+  .rt-td {
+    white-space: unset !important;
+  }
 `

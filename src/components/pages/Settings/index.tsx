@@ -58,7 +58,7 @@ export const Settings: React.FC<OwnProps> = () => {
             }}
             disabled={isAuthorizedTwitter}
           >
-            Twitter連携認証
+            Twitter 連携認証
             <span css={[icon, isAuthorizedTwitter ? authedTwitter : unauthed]}>
               <TwitterIcon />
             </span>
@@ -74,7 +74,7 @@ export const Settings: React.FC<OwnProps> = () => {
             }}
             disabled={isAuthorizedGoogle || isAuthorizingGoogle}
           >
-            YouTube連携認証
+            YouTube 連携認証
             <span css={[icon, isAuthorizedGoogle ? authedYouTube : unauthed]}>
               <YouTubeIcon />
             </span>
@@ -104,7 +104,7 @@ export const Settings: React.FC<OwnProps> = () => {
 }
 
 const btn = css`
-  text-transform: none;
+  text-transform: none !important;
 `
 
 const buttons = css`
