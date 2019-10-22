@@ -31,7 +31,7 @@ export const TwitterAuthCallback: React.FC<OwnProps> = () => {
     dispatch(authOperations.twitterSignInFinalize(queryParams.oauth_verifier))
   } else {
     // 拒否された場合
-    console.log("auth denied")
+    console.warn("auth denied")
 
     history.replace(RoutePath.Settings)
   }

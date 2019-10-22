@@ -35,7 +35,7 @@ const postTweetRequest = (message: TweetText): AppThunkAction => {
       })
     } catch (error) {
       const e = toSerializableError(error)
-      console.log(e)
+      console.warn(e)
 
       dispatch(
         logOperations.addLog({
@@ -81,7 +81,7 @@ const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
       })
     } catch (error) {
       const e = toSerializableErrorFromYouTubeAPIClientError(error)
-      console.log(e)
+      console.warn(e)
 
       dispatch(
         logOperations.addLog({

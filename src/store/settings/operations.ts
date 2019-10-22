@@ -20,7 +20,7 @@ export const fetchYouTubeActiveLive = (url: string): AppThunkAction => {
       })
     } catch (error) {
       const e = toSerializableErrorFromYouTubeAPIClientError(error)
-      console.log(e)
+      console.warn(e)
 
       dispatch(
         logOperations.addLog({

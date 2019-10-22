@@ -95,7 +95,7 @@ export const twitterSignIn = (): AppThunkAction => {
       })
     } catch (error) {
       const e = toSerializableError(error)
-      console.log(e)
+      console.warn(e)
 
       dispatch(
         logOperations.addLog({
@@ -151,7 +151,7 @@ export const twitterSignInFinalize = (
       })
     } catch (error) {
       const e = toSerializableError(error)
-      console.log(e)
+      console.warn(e)
 
       dispatch(
         logOperations.addLog({
@@ -242,7 +242,7 @@ export const googleSignIn = (): AppThunkAction => {
       await googleAuth.signIn()
     } catch (error) {
       const e = toSerializableError(error)
-      console.log(e)
+      console.warn(e)
 
       dispatch(
         logOperations.addLog({
