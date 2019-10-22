@@ -1,5 +1,6 @@
 import { replace } from "connected-react-router"
 import { batch } from "react-redux"
+import { APP_NAME_LONG } from "src/constants/App"
 import {
   GOOGLE_API_API_KEY,
   GOOGLE_API_CLIENT_ID,
@@ -197,7 +198,7 @@ export const twitterSignInFinalize = (
   }
 }
 
-export const twitterSignOut = (): AppThunkAction<void> => {
+const twitterSignOut = (): AppThunkAction<void> => {
   return (dispatch) => {
     batch(() => {
       dispatch(actions.twitterSignOut())
@@ -290,7 +291,7 @@ export const googleSignIn = (): AppThunkAction => {
   }
 }
 
-export const googleSignOut = (): AppThunkAction<void> => {
+const googleSignOut = (): AppThunkAction<void> => {
   return (dispatch) => {
     if (!googleAuth) {
       // 認証前にサインアウトボタンが押される可能性もあるため
@@ -308,6 +309,18 @@ export const googleSignOut = (): AppThunkAction<void> => {
           noticeStatus: "ok",
         })
       )
+    })
+  }
+}
+
+export const signOutAll = (): AppThunkAction<void> => {
+  return (dispatch) => {
+    batch(() => {
+      dispatch(twitterSignOut())
+      dispatch(googleSignOut())
+
+      // redux-localstorage で書き込んだ内容も削除
+      window.localStorage.removeItem(APP_NAME_LONG)
     })
   }
 }
