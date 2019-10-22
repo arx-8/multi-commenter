@@ -9,6 +9,7 @@ import { Header } from "src/components/molecules/Header"
 import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTooltip"
 import { InputPost } from "src/components/organisms/InputPost"
 import { InputUrl } from "src/components/organisms/InputUrl"
+import { LogView } from "src/components/organisms/LogView"
 import { PreviewCard } from "src/components/organisms/PreviewCard"
 import { PreviewCardAsSkeleton } from "src/components/organisms/PreviewCardAsSkeleton"
 import { headerIconColor } from "src/components/styles/styles"
@@ -52,8 +53,12 @@ export const Root: React.FC<OwnProps> = () => {
           {isLoadedYouTubeData ? <PreviewCard /> : <PreviewCardAsSkeleton />}
         </div>
 
-        <div css={inputPost}>
+        <div css={separator}>
           <InputPost />
+        </div>
+
+        <div css={separator}>
+          <LogView />
         </div>
       </Content>
     </Fragment>
@@ -65,6 +70,6 @@ const previewCard = css`
   justify-content: center;
 `
 
-const inputPost = css`
+const separator = css`
   padding-top: 16px;
 `

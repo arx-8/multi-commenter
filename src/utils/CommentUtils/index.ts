@@ -48,7 +48,13 @@ export const isValidComment = (text: string): boolean => {
   return 0 < countRemaining(text)
 }
 
+const FINAL_NEW_LINE = /\n$/
+
 export const concatAsTweet = (main: string, suffix: string): TweetText => {
-  // ハッシュタグなどがくっついてしまわないよう、半角スペースを空けている
+  if (FINAL_NEW_LINE.test(main)) {
+    // 本文に末尾改行があれば、空ける必要はない
+    return `${main}${suffix}` as TweetText
+  }
+  // ハッシュタグなどを分離するため、半角スペースを挟む
   return `${main} ${suffix}` as TweetText
 }

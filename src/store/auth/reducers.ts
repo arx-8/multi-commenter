@@ -146,5 +146,11 @@ export const reducer: Reducer<State, Action> = (
     })
   }
 
+  if (isType(action, actions.googleSetIsAuthorized)) {
+    return produce(state, (draft) => {
+      draft.google.isAuthorized = action.payload
+    })
+  }
+
   return state
 }

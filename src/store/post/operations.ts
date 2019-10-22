@@ -1,7 +1,12 @@
+import { batch } from "react-redux"
 import { postLiveChatMessage } from "src/data/apis/GoogleAPIClient"
 import { postTweet } from "src/data/apis/MultiCommenterAPIClient"
-import { toSerializableError } from "src/domain/errors/SerializableError"
+import {
+  toSerializableError,
+  toSerializableErrorFromYouTubeAPIClientError,
+} from "src/domain/errors/SerializableError"
 import { TweetText } from "src/domain/models/Twitter"
+import { logOperations } from "src/store/log"
 import { AppThunkAction } from "src/types/ReduxTypes"
 import { concatAsTweet } from "src/utils/CommentUtils"
 import * as actions from "./actions"
@@ -29,17 +34,31 @@ const postTweetRequest = (message: TweetText): AppThunkAction => {
         tweet: message,
       })
     } catch (error) {
-      console.log(error)
+      const e = toSerializableError(error)
+      console.warn(e)
 
       dispatch(
-        actions.postTweet.failed({
-          error: toSerializableError(error),
+        logOperations.addLog({
+          action: "Twitter の投稿に失敗",
+          detail: e.message,
+          noticeStatus: "error",
         })
       )
+      dispatch(actions.postTweet.failed({ error: e }))
       return
     }
 
-    dispatch(actions.postTweet.done({}))
+    batch(() => {
+      dispatch(actions.postTweet.done({}))
+
+      dispatch(
+        logOperations.addLog({
+          action: "Twitter に投稿",
+          detail: message,
+          noticeStatus: "ok",
+        })
+      )
+    })
   }
 }
 
@@ -48,6 +67,9 @@ const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
     const youTubeData = getState().settings.youTubeData
     if (!youTubeData) {
       throw new Error("YouTube data required.")
+    }
+    if (!("activeLiveChatId" in youTubeData)) {
+      throw new Error("No Live can not post chat.")
     }
 
     dispatch(actions.postYouTubeLiveChat.started())
@@ -58,16 +80,30 @@ const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
         messageText: message,
       })
     } catch (error) {
-      console.log(error)
+      const e = toSerializableErrorFromYouTubeAPIClientError(error)
+      console.warn(e)
 
       dispatch(
-        actions.postYouTubeLiveChat.failed({
-          error: toSerializableError(error),
+        logOperations.addLog({
+          action: "YouTube Chat の投稿に失敗",
+          detail: e.message,
+          noticeStatus: "error",
         })
       )
+      dispatch(actions.postYouTubeLiveChat.failed({ error: e }))
       return
     }
 
-    dispatch(actions.postYouTubeLiveChat.done({}))
+    batch(() => {
+      dispatch(actions.postYouTubeLiveChat.done({}))
+
+      dispatch(
+        logOperations.addLog({
+          action: "YouTube Chat に投稿",
+          detail: message,
+          noticeStatus: "ok",
+        })
+      )
+    })
   }
 }

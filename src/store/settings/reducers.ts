@@ -1,12 +1,12 @@
 import produce from "immer"
 import { Action, Reducer } from "redux"
-import { YouTubeActiveLive } from "src/domain/models/Google"
+import { YouTubeActiveLiveVideo, YouTubeVideo } from "src/domain/models/Google"
 import { isType } from "typescript-fsa"
 import * as actions from "./actions"
 
 export type State = Readonly<{
   youTubeUrl?: string
-  youTubeData?: YouTubeActiveLive
+  youTubeData?: YouTubeActiveLiveVideo | YouTubeVideo
   ui: {
     youTubeData: {
       isLoading: boolean
