@@ -3,6 +3,7 @@ import { css, jsx } from "@emotion/core"
 import React, { Fragment } from "react"
 import { CellInfo } from "react-table"
 import { NoticeStatusIcon } from "src/components/organisms/LogView/NoticeStatusIcon"
+import { errorColor, warnColor } from "src/components/styles/styles"
 import { LogRecord } from "src/domain/models/Log"
 
 /**
@@ -28,11 +29,11 @@ const text = css`
 const ok = css``
 
 const warn = css`
-  color: darkgoldenrod;
+  color: ${warnColor};
 `
 
 const error = css`
-  color: red;
+  color: ${errorColor};
   font-weight: bolder;
 `
 

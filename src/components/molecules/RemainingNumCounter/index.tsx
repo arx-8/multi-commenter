@@ -2,6 +2,7 @@
 import { css, jsx } from "@emotion/core"
 import { Typography } from "@material-ui/core"
 import React from "react"
+import { errorColor, warnColor } from "src/components/styles/styles"
 import { checkRemainingStatus } from "src/utils/CommentUtils"
 
 type OwnProps = {
@@ -22,11 +23,11 @@ export const RemainingNumCounter: React.FC<OwnProps> = ({ remainingNum }) => {
 const ok = css``
 
 const warn = css`
-  color: darkorange;
+  color: ${warnColor};
 `
 
 const error = css`
-  color: red;
+  color: ${errorColor};
 `
 
 // 簡易 pattern match
