@@ -47,6 +47,10 @@ describe("concatAsTweet", () => {
   it("exact", () => {
     expect.hasAssertions()
     expect(concatAsTweet("main", "suffix")).toStrictEqual("main suffix")
+    expect(concatAsTweet("", "")).toStrictEqual("")
+    expect(concatAsTweet(" ", "　")).toStrictEqual(" ")
+    expect(concatAsTweet("main text", "")).toStrictEqual("main text")
+    expect(concatAsTweet(" main text ", " ")).toStrictEqual(" main text ")
     expect(
       concatAsTweet(
         `末尾改行の場合

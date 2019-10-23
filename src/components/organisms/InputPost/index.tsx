@@ -12,7 +12,7 @@ import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTo
 import { RemainingNumCounter } from "src/components/molecules/RemainingNumCounter"
 import { postOperations, postSelectors } from "src/store/post"
 import { rootSelectors } from "src/store/root"
-import { concatAsTweet, countRemaining } from "src/utils/CommentUtils"
+import { concatAsTweet, countRemaining } from "src/utils/MessageUtils"
 
 type OwnProps = {
   children?: never

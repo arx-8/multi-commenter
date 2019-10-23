@@ -51,10 +51,17 @@ export const isValidComment = (text: string): boolean => {
 const FINAL_NEW_LINE = /\n$/
 
 export const concatAsTweet = (main: string, suffix: string): TweetText => {
+  // suffix がなければ、空白は不要
+  // suffix 側は改行を入力させないため trim できるが、main 側は改行があるから trim できない
+  if (suffix.trim().length === 0) {
+    return main as TweetText
+  }
+
+  // 本文に末尾改行があれば、空ける必要はない
   if (FINAL_NEW_LINE.test(main)) {
-    // 本文に末尾改行があれば、空ける必要はない
     return `${main}${suffix}` as TweetText
   }
+
   // ハッシュタグなどを分離するため、半角スペースを挟む
   return `${main} ${suffix}` as TweetText
 }

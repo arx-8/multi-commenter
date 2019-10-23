@@ -17,7 +17,7 @@ import {
 import { logOperations } from "src/store/log"
 import { AppThunkAction } from "src/types/ReduxTypes"
 import { FixMeAny } from "src/types/Utils"
-import { concatAsTweet } from "src/utils/CommentUtils"
+import { concatAsTweet } from "src/utils/MessageUtils"
 import * as actions from "./actions"
 
 export const post = (main: string, suffix: string): AppThunkAction<void> => {
