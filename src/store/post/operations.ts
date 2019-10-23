@@ -20,10 +20,12 @@ import { FixMeAny } from "src/types/Utils"
 import { concatAsTweet } from "src/utils/MessageUtils"
 import * as actions from "./actions"
 
-export const post = (main: string, suffix: string): AppThunkAction<void> => {
-  return (dispatch) => {
-    dispatch(postTweetRequest(concatAsTweet(main, suffix)))
-    dispatch(postYouTubeLiveChatRequest(main))
+export const post = (main: string, suffix: string): AppThunkAction => {
+  return async (dispatch) => {
+    await Promise.all([
+      dispatch(postTweetRequest(concatAsTweet(main, suffix))),
+      dispatch(postYouTubeLiveChatRequest(main)),
+    ])
   }
 }
 

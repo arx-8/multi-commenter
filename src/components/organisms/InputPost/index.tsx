@@ -117,8 +117,8 @@ export const InputPost: React.FC<OwnProps> = () => {
               disabled={!isPostable}
               variant="contained"
               color="primary"
-              onClick={() => {
-                dispatch(
+              onClick={async () => {
+                await dispatch(
                   postOperations.post(
                     editorState.getCurrentContent().getPlainText(),
                     tweetSuffix
