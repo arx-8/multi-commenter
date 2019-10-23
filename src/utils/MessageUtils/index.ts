@@ -7,8 +7,6 @@ import twitter from "twitter-text"
  */
 const MAX_LENGTH = 200
 
-const URL_PREFIX = /https?:\/\//
-
 export const getLength = (text: string): number => {
   return twitter.getTweetLength(text)
 }
@@ -59,6 +57,11 @@ export const checkMessageState = (
   }
 }
 
+const URL_PREFIX = /https?:\/\//
+
+/** Twitter API でエラーになるため、2行以上の空白行は NG */
+const TOO_MANY_LINE_BREAK = /\n\n\n/
+
 /**
  * 投稿できる状態か？
  */
@@ -88,6 +91,9 @@ const checkIsPostable = (
     return false
   }
   if (URL_PREFIX.test(suffix)) {
+    return false
+  }
+  if (TOO_MANY_LINE_BREAK.test(main)) {
     return false
   }
 

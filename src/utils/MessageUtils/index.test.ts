@@ -103,6 +103,19 @@ describe("isValidComment", () => {
       isPostable: true,
       remainingNum: 0,
     })
+    expect(
+      checkMessageState(
+        `
+あ
+
+あ`,
+        "many line break",
+        true
+      )
+    ).toStrictEqual({
+      isPostable: true,
+      remainingNum: 177,
+    })
   })
 
   it("invalid", () => {
@@ -134,6 +147,20 @@ describe("isValidComment", () => {
     ).toStrictEqual({
       isPostable: false,
       remainingNum: -1,
+    })
+    expect(
+      checkMessageState(
+        `
+あ
+
+
+あ`,
+        "too many line break",
+        true
+      )
+    ).toStrictEqual({
+      isPostable: false,
+      remainingNum: 172,
     })
   })
 })
