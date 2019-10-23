@@ -1,9 +1,9 @@
 import {
+  checkMessageState,
   checkRemainingStatus,
   concatAsTweet,
   countRemaining,
   getLength,
-  isValidComment,
 } from "."
 
 describe("getLength", () => {
@@ -77,21 +77,63 @@ describe("concatAsTweet", () => {
 describe("isValidComment", () => {
   it("valid", () => {
     expect.hasAssertions()
-    expect(isValidComment("aaa")).toStrictEqual(true)
-    expect(isValidComment("あa")).toStrictEqual(true)
-    expect(isValidComment("あああ")).toStrictEqual(true)
-    expect(isValidComment("🍞👏🐬")).toStrictEqual(true)
+    expect(checkMessageState("aaa", "sss", true)).toStrictEqual({
+      isPostable: true,
+      remainingNum: 193,
+    })
+    expect(checkMessageState("あa", "", true)).toStrictEqual({
+      isPostable: true,
+      remainingNum: 197,
+    })
+    expect(checkMessageState("あああ", "#", true)).toStrictEqual({
+      isPostable: true,
+      remainingNum: 192,
+    })
+    expect(checkMessageState("🍞👏🐬", " ", true)).toStrictEqual({
+      isPostable: true,
+      remainingNum: 194,
+    })
+    expect(
+      checkMessageState(
+        "aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa.aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa.",
+        "long",
+        true
+      )
+    ).toStrictEqual({
+      isPostable: true,
+      remainingNum: 0,
+    })
   })
 
   it("invalid", () => {
     expect.hasAssertions()
-    expect(isValidComment("")).toStrictEqual(false)
-    expect(isValidComment("aaahttps://www.example.com/")).toStrictEqual(false)
-    expect(isValidComment("あhttp://")).toStrictEqual(false)
+    expect(checkMessageState("aaa", "sss", false)).toStrictEqual({
+      isPostable: false,
+      remainingNum: 193,
+    })
+    expect(checkMessageState("", " ", true)).toStrictEqual({
+      isPostable: false,
+      remainingNum: 200,
+    })
     expect(
-      isValidComment(
-        "aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa.aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa."
+      checkMessageState("aaahttps://www.example.com/", "suffix", true)
+    ).toStrictEqual({
+      isPostable: false,
+      remainingNum: 166,
+    })
+    expect(checkMessageState("あhttp://", "", true)).toStrictEqual({
+      isPostable: false,
+      remainingNum: 191,
+    })
+    expect(
+      checkMessageState(
+        "aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa.aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aa",
+        "too long",
+        true
       )
-    ).toStrictEqual(false)
+    ).toStrictEqual({
+      isPostable: false,
+      remainingNum: -1,
+    })
   })
 })

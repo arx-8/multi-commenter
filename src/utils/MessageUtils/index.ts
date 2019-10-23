@@ -34,20 +34,67 @@ export const checkRemainingStatus = (remainingNum: number): RemainingStatus => {
   return "ok"
 }
 
-export const isValidComment = (text: string): boolean => {
-  // 空 NG
-  if (text.length === 0) {
-    return false
-  }
+/**
+ * メッセージの状態をチェックして、必要な情報を返す
+ */
+export const checkMessageState = (
+  main: string,
+  suffix: string,
+  isReadyToPost: boolean
+): {
+  /** 投稿可能か？ */
+  isPostable: boolean
+  /**
+   * 入力可能な残り文字数
+   * この処理内で計算した値を返し再利用することで、計算量を減らす
+   */
+  remainingNum: number
+} => {
+  const remainingNum = countRemaining(concatAsTweet(main, suffix))
+  const isPostable = checkIsPostable(main, suffix, isReadyToPost, remainingNum)
 
-  // URL NG
-  if (URL_PREFIX.test(text)) {
-    return false
+  return {
+    isPostable,
+    remainingNum,
   }
-
-  return 0 < countRemaining(text)
 }
 
+/**
+ * 投稿できる状態か？
+ */
+const checkIsPostable = (
+  main: string,
+  suffix: string,
+  isReadyToPost: boolean,
+  remainingNum: number
+): boolean => {
+  if (!isReadyToPost) {
+    return false
+  }
+
+  // suffix はオプション・なくてもいいため、チェックしない
+  // 空白・改行のみは NG
+  if (main.trim().length === 0) {
+    return false
+  }
+
+  // 文字数超過
+  if (remainingNum < 0) {
+    return false
+  }
+
+  // 禁止文字
+  if (URL_PREFIX.test(main)) {
+    return false
+  }
+  if (URL_PREFIX.test(suffix)) {
+    return false
+  }
+
+  return true
+}
+
+/** 末尾改行の検出のため */
 const FINAL_NEW_LINE = /\n$/
 
 export const concatAsTweet = (main: string, suffix: string): TweetText => {
