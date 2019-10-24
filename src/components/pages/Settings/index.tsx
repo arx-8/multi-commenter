@@ -4,7 +4,7 @@ import { Button } from "@material-ui/core"
 import ArrowBackIcon from "@material-ui/icons/ArrowBack"
 import DeleteIcon from "@material-ui/icons/Delete"
 import React, { Fragment } from "react"
-import { batch, useDispatch, useSelector } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router"
 import { TwitterIcon } from "src/components/atoms/TwitterIcon"
 import { YouTubeIcon } from "src/components/atoms/YouTubeIcon"
@@ -58,7 +58,7 @@ export const Settings: React.FC<OwnProps> = () => {
             }}
             disabled={isAuthorizedTwitter}
           >
-            Twitter連携認証
+            Twitter 連携認証
             <span css={[icon, isAuthorizedTwitter ? authedTwitter : unauthed]}>
               <TwitterIcon />
             </span>
@@ -74,7 +74,7 @@ export const Settings: React.FC<OwnProps> = () => {
             }}
             disabled={isAuthorizedGoogle || isAuthorizingGoogle}
           >
-            YouTube連携認証
+            YouTube 連携認証
             <span css={[icon, isAuthorizedGoogle ? authedYouTube : unauthed]}>
               <YouTubeIcon />
             </span>
@@ -87,10 +87,7 @@ export const Settings: React.FC<OwnProps> = () => {
             variant="contained"
             color="secondary"
             onClick={() => {
-              batch(() => {
-                dispatch(authOperations.twitterSignOut())
-                dispatch(authOperations.googleSignOut())
-              })
+              dispatch(authOperations.signOutAll())
             }}
             disabled={!isAuthorizedGoogle && !isAuthorizedTwitter}
           >
@@ -104,7 +101,7 @@ export const Settings: React.FC<OwnProps> = () => {
 }
 
 const btn = css`
-  text-transform: none;
+  text-transform: none !important;
 `
 
 const buttons = css`

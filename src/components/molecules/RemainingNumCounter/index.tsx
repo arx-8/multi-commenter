@@ -3,7 +3,7 @@ import { css, jsx } from "@emotion/core"
 import { Typography } from "@material-ui/core"
 import React from "react"
 import { errorColor, warnColor } from "src/components/styles/styles"
-import { checkRemainingStatus } from "src/utils/CommentUtils"
+import { checkRemainingStatus } from "src/utils/MessageUtils"
 
 type OwnProps = {
   children?: never

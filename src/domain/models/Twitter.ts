@@ -27,3 +27,13 @@ type AuthDenied = {
  * ツイート本文
  */
 export type TweetText = Brand<string, "TweetText">
+
+/**
+ * リミットエラーなのか、本当にトークンの有効期限切れなのか、よくわからないエラー
+ */
+export type TwitterApiInvalidOrExpiredTokenError = [
+  {
+    code: 89
+    message: "Invalid or expired token."
+  }
+]

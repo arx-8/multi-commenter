@@ -12,7 +12,7 @@ import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTo
 import { RemainingNumCounter } from "src/components/molecules/RemainingNumCounter"
 import { postOperations, postSelectors } from "src/store/post"
 import { rootSelectors } from "src/store/root"
-import { concatAsTweet, countRemaining } from "src/utils/CommentUtils"
+import { checkMessageState } from "src/utils/MessageUtils"
 
 type OwnProps = {
   children?: never
@@ -62,14 +62,10 @@ export const InputPost: React.FC<OwnProps> = () => {
   // tweet suffix
   const [tweetSuffix, setTweetSuffix] = useState("")
 
-  const remainingNum = countRemaining(
-    concatAsTweet(editorState.getCurrentContent().getPlainText(), tweetSuffix)
-  )
-
-  const isPostable = checkIsPostable(
+  const { isPostable, remainingNum } = checkMessageState(
     editorState.getCurrentContent().getPlainText(),
-    isReadyToPost,
-    remainingNum
+    tweetSuffix,
+    isReadyToPost
   )
 
   return (
@@ -121,8 +117,8 @@ export const InputPost: React.FC<OwnProps> = () => {
               disabled={!isPostable}
               variant="contained"
               color="primary"
-              onClick={() => {
-                dispatch(
+              onClick={async () => {
+                await dispatch(
                   postOperations.post(
                     editorState.getCurrentContent().getPlainText(),
                     tweetSuffix
@@ -173,31 +169,6 @@ export const InputPost: React.FC<OwnProps> = () => {
       </div>
     </div>
   )
-}
-
-/**
- * 投稿できる状態か？
- */
-const checkIsPostable = (
-  main: string,
-  isReadyToPost: boolean,
-  remainingNum: number
-): boolean => {
-  if (!isReadyToPost) {
-    return false
-  }
-
-  // suffix はオプションなため、なくてもいい
-  if (main.length === 0) {
-    return false
-  }
-
-  // 文字数超過
-  if (remainingNum < 0) {
-    return false
-  }
-
-  return true
 }
 
 const root = css``

@@ -17,6 +17,7 @@ import immutableStateInvariantMiddleware from "redux-immutable-state-invariant"
 import persistState from "redux-localstorage"
 import { createSerializableStateInvariantMiddleware } from "redux-starter-kit"
 import thunkMiddleWare from "redux-thunk"
+import { APP_NAME_LONG } from "src/constants/App"
 import { isDevelopment } from "src/constants/Env"
 import { authReducer, AuthState } from "src/store/auth"
 import { logReducer, LogState } from "src/store/log"
@@ -59,7 +60,12 @@ export const configureStore = (
   const store = createStore(
     rootReducer,
     initialState,
-    composeEnhancers(applyMiddleware(...middleWares), persistState(["auth"]))
+    composeEnhancers(
+      applyMiddleware(...middleWares),
+      persistState(["auth"], {
+        key: APP_NAME_LONG,
+      })
+    )
   )
   return store
 }

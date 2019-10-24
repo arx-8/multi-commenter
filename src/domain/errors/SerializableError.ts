@@ -1,3 +1,7 @@
+import { HTTPError } from "ky"
+
+// TODO FW や data 層に汚染されすぎ
+
 export type SerializableError = {
   message: string
   name: string
@@ -14,6 +18,17 @@ export const toSerializableError = (
     name: error.name,
     stack: error.stack,
     code: errorCode,
+  }
+}
+
+export const toSerializableErrorByKyError = (
+  error: HTTPError,
+  message: string
+): SerializableError => {
+  return {
+    message,
+    name: "HTTPError",
+    code: error.response.status,
   }
 }
 
