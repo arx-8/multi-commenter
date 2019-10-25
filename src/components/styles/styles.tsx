@@ -13,3 +13,5 @@ export const warnColor = "darkorange"
 export const errorColor = "red"
 
 export const likedColor = "#065fd4"
+
+export const appBarColor = "#3f51b5"

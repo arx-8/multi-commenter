@@ -1,6 +1,7 @@
 /** @jsx jsx */
 import { css, jsx } from "@emotion/core"
 import BuildIcon from "@material-ui/icons/Build"
+import HelpIcon from "@material-ui/icons/Help"
 import React, { Fragment } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import { useHistory } from "react-router"
@@ -45,6 +46,14 @@ export const Root: React.FC<OwnProps> = () => {
           showBadge={!isAllAuthorized}
         >
           <BuildIcon css={headerIconColor} />
+        </IconButtonWithTooltip>
+        <IconButtonWithTooltip
+          onClick={() => {
+            history.push(RoutePath.Help)
+          }}
+          tooltipMessage="ヘルプ"
+        >
+          <HelpIcon css={headerIconColor} />
         </IconButtonWithTooltip>
       </Header>
 

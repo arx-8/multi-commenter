@@ -63,7 +63,7 @@ export const InputUrl: React.FC<OwnProps> = ({ onSubmit }) => {
           <InnerInput
             disabled={!isAllAuthorized}
             name="url"
-            placeholder="https://www.youtube.com/watch?v=xxx"
+            placeholder="YouTube Live URL (e.g. https://www.youtube.com/watch?v=xxx)"
             inputProps={{ "aria-label": "Open URL" }}
             classes={{
               root: classes.inputRoot,

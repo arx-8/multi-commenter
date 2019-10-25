@@ -1,6 +1,7 @@
 import { ConnectedRouter as Router } from "connected-react-router"
 import React from "react"
 import { Route, Switch } from "react-router-dom"
+import { Help } from "src/components/pages/Help"
 import { NotFound } from "src/components/pages/NotFound"
 import { Root } from "src/components/pages/Root"
 import { Settings } from "src/components/pages/Settings"
@@ -17,6 +18,7 @@ export const Routes: React.FC<OwnProps> = () => {
     <Router history={history}>
       <Switch>
         <Route exact path={RoutePath.Root} component={Root} />
+        <Route exact path={RoutePath.Help} component={Help} />
         <Route exact path={RoutePath.Settings} component={Settings} />
         <Route
           exact
