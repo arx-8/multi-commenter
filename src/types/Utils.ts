@@ -6,6 +6,9 @@ export type ValueOf<T> = T[keyof T]
 /**
  * Nominal Typing
  * (Intersection types and brands)
+ *
+ * e.g.) type BrandName = <string, "BrandName">
+ *
  * @see https://basarat.gitbooks.io/typescript/docs/tips/nominalTyping.html
  * @see https://michalzalecki.com/nominal-typing-in-typescript/#approach-4-intersection-types-and-brands
  */
