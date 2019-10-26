@@ -13,20 +13,17 @@ import { RemainingNumCounter } from "src/components/molecules/RemainingNumCounte
 import { postOperations, postSelectors } from "src/store/post"
 import { rootSelectors } from "src/store/root"
 import { RootState } from "src/store/store"
-import { checkMessageState } from "src/utils/MessageUtils"
 
 type OwnProps = {
   children?: never
 }
 
-/**
- * パフォーマンスの理由で、state を使っている
- * そのため、少し複雑化している
- * state を使っている理由は、テキスト入力はなるべく速くできた方がよいため
- */
 export const InputPost: React.FC<OwnProps> = () => {
   const dispatch = useDispatch()
   const isReadyToPost = useSelector(rootSelectors.isReadyToPost)
+  const { isPostable, remainingNum } = useSelector(
+    postSelectors.getInputMessageStatus
+  )
   const isPosting = useSelector(postSelectors.isPosting)
   const tweetSuffix = useSelector((s: RootState) => s.post.tweetSuffix)
 
@@ -77,12 +74,6 @@ export const InputPost: React.FC<OwnProps> = () => {
     [editorState, setEditorState]
   )
 
-  const { isPostable, remainingNum } = checkMessageState(
-    editorState.getCurrentContent().getPlainText(),
-    tweetSuffix,
-    isReadyToPost
-  )
-
   return (
     <div css={root}>
       <div css={[editor, isPosting && disabledInput]}>
@@ -129,7 +120,7 @@ export const InputPost: React.FC<OwnProps> = () => {
 
           <div css={separatorHorizontal}>
             <Button
-              disabled={!isPostable}
+              disabled={!isReadyToPost || !isPostable}
               variant="contained"
               color="primary"
               onClick={async () => {
