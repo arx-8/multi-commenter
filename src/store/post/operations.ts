@@ -17,15 +17,17 @@ import { FixMeAny } from "src/types/Utils"
 import { concatAsTweet } from "src/utils/MessageUtils"
 import * as actions from "./actions"
 
-export const { onChangeTweetSuffix } = actions
+export const { onChangeMainMessage, onChangeTweetSuffix } = actions
 
-export const post = (main: string): AppThunkAction => {
+export const post = (): AppThunkAction => {
   return async (dispatch, getState) => {
+    const state = getState().post
+
     await Promise.all([
       dispatch(
-        postTweetRequest(concatAsTweet(main, getState().post.tweetSuffix))
+        postTweetRequest(concatAsTweet(state.mainMessage, state.tweetSuffix))
       ),
-      dispatch(postYouTubeLiveChatRequest(main)),
+      dispatch(postYouTubeLiveChatRequest(state.mainMessage)),
     ])
   }
 }

@@ -37,7 +37,23 @@ export const InputPost: React.FC<OwnProps> = () => {
   }, [])
 
   // editorState
-  const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  const [editorState, _setEditorState] = useState(EditorState.createEmpty())
+  const setEditorState = useCallback(
+    (next: EditorState) => {
+      // redux には Plain text だけあれば処理できる（描画用の Object 全てを保持したくない）
+      // そのため、 local state と redux state を使い分けてる
+      _setEditorState(next)
+
+      dispatch(
+        postOperations.onChangeMainMessage(
+          next.getCurrentContent().getPlainText()
+        )
+      )
+    },
+    [dispatch]
+  )
+
+  // emoji
   const onSelectEmoji = useCallback(
     (emoji: EmojiData) => {
       if (!("native" in emoji)) {
@@ -58,7 +74,7 @@ export const InputPost: React.FC<OwnProps> = () => {
       )
       setEditorState(next)
     },
-    [editorState]
+    [editorState, setEditorState]
   )
 
   const { isPostable, remainingNum } = checkMessageState(
@@ -117,11 +133,7 @@ export const InputPost: React.FC<OwnProps> = () => {
               variant="contained"
               color="primary"
               onClick={async () => {
-                await dispatch(
-                  postOperations.post(
-                    editorState.getCurrentContent().getPlainText()
-                  )
-                )
+                await dispatch(postOperations.post())
 
                 // 初期化
                 setEditorState(EditorState.createEmpty())
