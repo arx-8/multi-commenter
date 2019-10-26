@@ -12,6 +12,7 @@ import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTo
 import { RemainingNumCounter } from "src/components/molecules/RemainingNumCounter"
 import { postOperations, postSelectors } from "src/store/post"
 import { rootSelectors } from "src/store/root"
+import { RootState } from "src/store/store"
 import { checkMessageState } from "src/utils/MessageUtils"
 
 type OwnProps = {
@@ -27,6 +28,7 @@ export const InputPost: React.FC<OwnProps> = () => {
   const dispatch = useDispatch()
   const isReadyToPost = useSelector(rootSelectors.isReadyToPost)
   const isPosting = useSelector(postSelectors.isPosting)
+  const tweetSuffix = useSelector((s: RootState) => s.post.tweetSuffix)
 
   // showPicker
   const [showPicker, setShowPicker] = useState(false)
@@ -59,9 +61,6 @@ export const InputPost: React.FC<OwnProps> = () => {
     [editorState]
   )
 
-  // tweet suffix
-  const [tweetSuffix, setTweetSuffix] = useState("")
-
   const { isPostable, remainingNum } = checkMessageState(
     editorState.getCurrentContent().getPlainText(),
     tweetSuffix,
@@ -91,7 +90,7 @@ export const InputPost: React.FC<OwnProps> = () => {
           }}
           label="ツイート接尾辞"
           onChange={(e) => {
-            setTweetSuffix(e.target.value)
+            dispatch(postOperations.onChangeTweetSuffix(e.target.value))
           }}
           placeholder="#example (ハッシュタグなど、ツイートのみ接尾辞を付けて投稿できます)"
           value={tweetSuffix}
@@ -120,8 +119,7 @@ export const InputPost: React.FC<OwnProps> = () => {
               onClick={async () => {
                 await dispatch(
                   postOperations.post(
-                    editorState.getCurrentContent().getPlainText(),
-                    tweetSuffix
+                    editorState.getCurrentContent().getPlainText()
                   )
                 )
 
