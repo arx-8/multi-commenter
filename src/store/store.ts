@@ -13,9 +13,7 @@ import {
   DeepPartial,
   Store,
 } from "redux"
-import immutableStateInvariantMiddleware from "redux-immutable-state-invariant"
 import persistState from "redux-localstorage"
-import { createSerializableStateInvariantMiddleware } from "redux-starter-kit"
 import thunkMiddleWare from "redux-thunk"
 import { APP_NAME_LONG } from "src/constants/App"
 import { isDevelopment } from "src/constants/Env"
@@ -53,8 +51,10 @@ export const configureStore = (
   middleWares.push(thunkMiddleWare)
   middleWares.push(routerMiddleware(history))
   if (isDevelopment) {
-    middleWares.push(immutableStateInvariantMiddleware())
-    middleWares.push(createSerializableStateInvariantMiddleware())
+    middleWares.push(require("redux-immutable-state-invariant").default())
+    middleWares.push(
+      require("redux-starter-kit").createSerializableStateInvariantMiddleware()
+    )
   }
 
   const store = createStore(
