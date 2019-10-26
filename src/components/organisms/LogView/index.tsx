@@ -20,7 +20,7 @@ export const LogView: React.FC<OwnProps> = () => {
       <ReactTable<LogRecord>
         columns={columnsDef}
         data={logs}
-        defaultPageSize={5}
+        defaultPageSize={10}
       />
     </div>
   )
@@ -28,7 +28,8 @@ export const LogView: React.FC<OwnProps> = () => {
 
 const columnsDef: Column<LogRecord>[] = [
   {
-    Header: "ログ",
+    Header:
+      "ログ（「列名」をクリックで並替え。Shiftキー同時押しで複数列並替え。）",
     headerClassName: "root-header",
     columns: [
       {
@@ -38,6 +39,7 @@ const columnsDef: Column<LogRecord>[] = [
       },
       {
         Header: "操作",
+        accessor: "action",
         width: 220,
         Cell: CellOfAction,
       },
