@@ -38,6 +38,7 @@ const columnsDef: Column<LogRecord>[] = [
       },
       {
         Header: "操作",
+        accessor: "action",
         width: 220,
         Cell: CellOfAction,
       },
