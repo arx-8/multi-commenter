@@ -1,5 +1,5 @@
 import {
-  checkMessageState,
+  checkIsPostable,
   checkRemainingStatus,
   concatAsTweet,
   countRemaining,
@@ -74,93 +74,205 @@ describe("concatAsTweet", () => {
   })
 })
 
-describe("isValidComment", () => {
-  it("valid", () => {
-    expect.hasAssertions()
-    expect(checkMessageState("aaa", "sss", true)).toStrictEqual({
-      isPostable: true,
-      remainingNum: 193,
-    })
-    expect(checkMessageState("あa", "", true)).toStrictEqual({
-      isPostable: true,
-      remainingNum: 197,
-    })
-    expect(checkMessageState("あああ", "#", true)).toStrictEqual({
-      isPostable: true,
-      remainingNum: 192,
-    })
-    expect(checkMessageState("🍞👏🐬", " ", true)).toStrictEqual({
-      isPostable: true,
-      remainingNum: 194,
-    })
-    expect(
-      checkMessageState(
-        "aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa.aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa.",
-        "long",
-        true
+describe("checkIsPostable", () => {
+  describe("valid cases", () => {
+    it("valid main + suffix", () => {
+      expect.hasAssertions()
+      // ## Arrange ##
+      const main = "aaa"
+      const suffix = "sss"
+
+      // ## Act ##
+      const result = checkIsPostable(
+        main,
+        suffix,
+        countRemaining(concatAsTweet(main, suffix))
       )
-    ).toStrictEqual({
-      isPostable: true,
-      remainingNum: 0,
+
+      // ## Assert ##
+      expect(result).toStrictEqual(true)
     })
-    expect(
-      checkMessageState(
-        `
+
+    it("valid main only", () => {
+      expect.hasAssertions()
+      // ## Arrange ##
+      const main = "あああ"
+      const suffix = ""
+
+      // ## Act ##
+      const result = checkIsPostable(
+        main,
+        suffix,
+        countRemaining(concatAsTweet(main, suffix))
+      )
+
+      // ## Assert ##
+      expect(result).toStrictEqual(true)
+    })
+
+    it("valid emoji", () => {
+      expect.hasAssertions()
+      // ## Arrange ##
+      const main = "🍞👏🐬"
+      const suffix = " "
+
+      // ## Act ##
+      const result = checkIsPostable(
+        main,
+        suffix,
+        countRemaining(concatAsTweet(main, suffix))
+      )
+
+      // ## Assert ##
+      expect(result).toStrictEqual(true)
+    })
+
+    it("valid long boundary value", () => {
+      expect.hasAssertions()
+      // ## Arrange ##
+      const main =
+        "aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa.aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa."
+      const suffix = "long"
+
+      // ## Act ##
+      const result = checkIsPostable(
+        main,
+        suffix,
+        countRemaining(concatAsTweet(main, suffix))
+      )
+
+      // ## Assert ##
+      expect(result).toStrictEqual(true)
+    })
+
+    it("valid many line break", () => {
+      expect.hasAssertions()
+      // ## Arrange ##
+      const main = `
 あ
 
-あ`,
-        "many line break",
-        true
+あ`
+      const suffix = "many line break"
+
+      // ## Act ##
+      const result = checkIsPostable(
+        main,
+        suffix,
+        countRemaining(concatAsTweet(main, suffix))
       )
-    ).toStrictEqual({
-      isPostable: true,
-      remainingNum: 177,
+
+      // ## Assert ##
+      expect(result).toStrictEqual(true)
     })
   })
 
-  it("invalid", () => {
-    expect.hasAssertions()
-    expect(checkMessageState("aaa", "sss", false)).toStrictEqual({
-      isPostable: false,
-      remainingNum: 193,
-    })
-    expect(checkMessageState("", " ", true)).toStrictEqual({
-      isPostable: false,
-      remainingNum: 200,
-    })
-    expect(
-      checkMessageState("aaahttps://www.example.com/", "suffix", true)
-    ).toStrictEqual({
-      isPostable: false,
-      remainingNum: 166,
-    })
-    expect(checkMessageState("あhttp://", "", true)).toStrictEqual({
-      isPostable: false,
-      remainingNum: 191,
-    })
-    expect(
-      checkMessageState(
-        "aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa.aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aa",
-        "too long",
-        true
+  describe("invalid cases", () => {
+    it("empty", () => {
+      expect.hasAssertions()
+      // ## Arrange ##
+      const main = " "
+      const suffix = ""
+
+      // ## Act ##
+      const result = checkIsPostable(
+        main,
+        suffix,
+        countRemaining(concatAsTweet(main, suffix))
       )
-    ).toStrictEqual({
-      isPostable: false,
-      remainingNum: -1,
+
+      // ## Assert ##
+      expect(result).toStrictEqual(false)
     })
-    expect(
-      checkMessageState(
-        `
+
+    it("contains url in main", () => {
+      expect.hasAssertions()
+      // ## Arrange ##
+      const main = "aaahttps://www.example.com/"
+      const suffix = "suffix"
+
+      // ## Act ##
+      const result = checkIsPostable(
+        main,
+        suffix,
+        countRemaining(concatAsTweet(main, suffix))
+      )
+
+      // ## Assert ##
+      expect(result).toStrictEqual(false)
+    })
+
+    it("contains url in suffix", () => {
+      expect.hasAssertions()
+      // ## Arrange ##
+      const main = "aaa"
+      const suffix = "あhttp://"
+
+      // ## Act ##
+      const result = checkIsPostable(
+        main,
+        suffix,
+        countRemaining(concatAsTweet(main, suffix))
+      )
+
+      // ## Assert ##
+      expect(result).toStrictEqual(false)
+    })
+
+    it("too long 1", () => {
+      expect.hasAssertions()
+      // ## Arrange ##
+      const main =
+        "aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa.aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aa"
+      const suffix = "too long"
+
+      // ## Act ##
+      const result = checkIsPostable(
+        main,
+        suffix,
+        countRemaining(concatAsTweet(main, suffix))
+      )
+
+      // ## Assert ##
+      expect(result).toStrictEqual(false)
+    })
+
+    it("too long 2", () => {
+      expect.hasAssertions()
+      // ## Arrange ##
+      const main =
+        "aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa.aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa aaaa a"
+      const suffix = ""
+
+      // ## Act ##
+      const result = checkIsPostable(
+        main,
+        suffix,
+        countRemaining(concatAsTweet(main, suffix))
+      )
+
+      // ## Assert ##
+      expect(result).toStrictEqual(false)
+    })
+
+    it("too many line break", () => {
+      expect.hasAssertions()
+      // ## Arrange ##
+      const main = `
 あ
 
 
-あ`,
-        "too many line break",
-        true
+あ`
+      const suffix = ""
+
+      // ## Act ##
+      const result = checkIsPostable(
+        main,
+        suffix,
+        countRemaining(concatAsTweet(main, suffix))
       )
-    ).toStrictEqual({
-      isPostable: false,
-      remainingNum: 172,
+
+      // ## Assert ##
+      expect(result).toStrictEqual(false)
     })
   })
 })

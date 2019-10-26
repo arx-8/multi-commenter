@@ -12,21 +12,20 @@ import { IconButtonWithTooltip } from "src/components/molecules/IconButtonWithTo
 import { RemainingNumCounter } from "src/components/molecules/RemainingNumCounter"
 import { postOperations, postSelectors } from "src/store/post"
 import { rootSelectors } from "src/store/root"
-import { checkMessageState } from "src/utils/MessageUtils"
+import { RootState } from "src/store/store"
 
 type OwnProps = {
   children?: never
 }
 
-/**
- * パフォーマンスの理由で、state を使っている
- * そのため、少し複雑化している
- * state を使っている理由は、テキスト入力はなるべく速くできた方がよいため
- */
 export const InputPost: React.FC<OwnProps> = () => {
   const dispatch = useDispatch()
   const isReadyToPost = useSelector(rootSelectors.isReadyToPost)
+  const { isPostable, remainingNum } = useSelector(
+    postSelectors.getInputMessageStatus
+  )
   const isPosting = useSelector(postSelectors.isPosting)
+  const tweetSuffix = useSelector((s: RootState) => s.post.tweetSuffix)
 
   // showPicker
   const [showPicker, setShowPicker] = useState(false)
@@ -35,7 +34,23 @@ export const InputPost: React.FC<OwnProps> = () => {
   }, [])
 
   // editorState
-  const [editorState, setEditorState] = useState(EditorState.createEmpty())
+  const [editorState, _setEditorState] = useState(EditorState.createEmpty())
+  const setEditorState = useCallback(
+    (next: EditorState) => {
+      // redux には Plain text だけあれば処理できる（描画用の Object 全てを保持したくない）
+      // そのため、 local state と redux state を使い分けてる
+      _setEditorState(next)
+
+      dispatch(
+        postOperations.onChangeMainMessage(
+          next.getCurrentContent().getPlainText()
+        )
+      )
+    },
+    [dispatch]
+  )
+
+  // emoji
   const onSelectEmoji = useCallback(
     (emoji: EmojiData) => {
       if (!("native" in emoji)) {
@@ -56,16 +71,7 @@ export const InputPost: React.FC<OwnProps> = () => {
       )
       setEditorState(next)
     },
-    [editorState]
-  )
-
-  // tweet suffix
-  const [tweetSuffix, setTweetSuffix] = useState("")
-
-  const { isPostable, remainingNum } = checkMessageState(
-    editorState.getCurrentContent().getPlainText(),
-    tweetSuffix,
-    isReadyToPost
+    [editorState, setEditorState]
   )
 
   return (
@@ -91,7 +97,7 @@ export const InputPost: React.FC<OwnProps> = () => {
           }}
           label="ツイート接尾辞"
           onChange={(e) => {
-            setTweetSuffix(e.target.value)
+            dispatch(postOperations.onChangeTweetSuffix(e.target.value))
           }}
           placeholder="#example (ハッシュタグなど、ツイートのみ接尾辞を付けて投稿できます)"
           value={tweetSuffix}
@@ -114,19 +120,21 @@ export const InputPost: React.FC<OwnProps> = () => {
 
           <div css={separatorHorizontal}>
             <Button
-              disabled={!isPostable}
+              disabled={!isReadyToPost || !isPostable}
               variant="contained"
               color="primary"
               onClick={async () => {
-                await dispatch(
-                  postOperations.post(
-                    editorState.getCurrentContent().getPlainText(),
-                    tweetSuffix
-                  )
-                )
+                try {
+                  await dispatch(postOperations.post())
 
-                // 初期化
-                setEditorState(EditorState.createEmpty())
+                  // 連続投稿阻止されなかった場合のみ初期化
+                  setEditorState(EditorState.createEmpty())
+
+                  // eslint-disable-next-line no-empty
+                } catch (error) {
+                  // NOP: ここに来る例外は、連続投稿阻止だけ
+                  // ログでユーザー通知しているため、ここでは何もしなくてよい
+                }
               }}
             >
               投稿

@@ -1,5 +1,6 @@
 import { HTTPError } from "ky"
 import { batch } from "react-redux"
+import { LogActionForSystem } from "src/constants/App"
 import {
   postLiveChatMessage,
   postRateLike,
@@ -10,22 +11,74 @@ import {
   toSerializableErrorFromYouTubeAPIClientError,
 } from "src/domain/errors/SerializableError"
 import { extractVideoIdByURL } from "src/domain/models/Google"
-import {
-  TweetText,
-  TwitterApiInvalidOrExpiredTokenError,
-} from "src/domain/models/Twitter"
+import { TweetText, TwitterApiError } from "src/domain/models/Twitter"
 import { logOperations } from "src/store/log"
 import { AppThunkAction } from "src/types/ReduxTypes"
 import { FixMeAny } from "src/types/Utils"
+import { getNowAsDayjs, toDayjs } from "src/utils/DateTimeUtils"
 import { concatAsTweet } from "src/utils/MessageUtils"
 import * as actions from "./actions"
 
-export const post = (main: string, suffix: string): AppThunkAction => {
-  return async (dispatch) => {
+export const { onChangeMainMessage, onChangeTweetSuffix } = actions
+
+export const post = (): AppThunkAction => {
+  return async (dispatch, getState) => {
+    const state = getState().post
+
+    dispatch(preventRateLimitError())
+
     await Promise.all([
-      dispatch(postTweetRequest(concatAsTweet(main, suffix))),
-      dispatch(postYouTubeLiveChatRequest(main)),
+      dispatch(
+        postTweetRequest(concatAsTweet(state.mainMessage, state.tweetSuffix))
+      ),
+      dispatch(postYouTubeLiveChatRequest(state.mainMessage)),
     ])
+  }
+}
+
+/**
+ * 連続投稿待ちに十分な時間
+ */
+const SUFFICIENT_SECOND_TO_WAIT_FOR_CONSECUTIVE_POSTS = 15
+
+/**
+ * レートリミットエラーに引っかかりうるような、過剰な連続投稿を阻止する
+ * @throws
+ */
+const preventRateLimitError = (): AppThunkAction<void> => {
+  return (dispatch, getState) => {
+    const { logs } = getState().log
+
+    const latestPostedLog = logs.find(
+      (l) =>
+        l.action === LogActionForSystem.POSTED_TO_TWITTER ||
+        l.action === LogActionForSystem.POSTED_TO_YOU_TUBE
+    )
+    if (!latestPostedLog) {
+      // 投稿履歴がなければ、投稿してよい
+      return
+    }
+
+    const diffSec = getNowAsDayjs().diff(
+      toDayjs(latestPostedLog.actionDateTime),
+      "second"
+    )
+
+    // 十分な投稿間隔が空いていれば、投稿してよい
+    const remainSec = SUFFICIENT_SECOND_TO_WAIT_FOR_CONSECUTIVE_POSTS - diffSec
+    if (remainSec <= 0) {
+      return
+    }
+
+    dispatch(
+      logOperations.addLog({
+        action: "投稿規制中",
+        detail: `あと ${remainSec} 秒後に投稿できるようになります。`,
+        noticeStatus: "warn",
+      })
+    )
+
+    throw new Error("Too Many Requests")
   }
 }
 
@@ -48,23 +101,25 @@ const postTweetRequest = (message: TweetText): AppThunkAction => {
       const error: HTTPError = _error
       console.warn(error)
       const res:
-        | TwitterApiInvalidOrExpiredTokenError
+        | TwitterApiError
         | Record<string, FixMeAny> = await error.response.json()
 
       const e = toSerializableErrorByKyError(error, JSON.stringify(res))
 
-      // レートリミットエラー？の場合に、非常に不親切なエラーメッセージが返るため
-      if (
-        Array.isArray(res) &&
-        res.length === 1 &&
-        res[0].message.includes("Invalid or expired token.")
-      ) {
+      // TwitterAPI 公式のエラーメッセージだけだとわかりづらいため、詳細を補足
+      if (Array.isArray(res) && res.length === 1 && res[0] != null) {
+        let exMsg
+        if (res[0].message.includes("Invalid or expired token.")) {
+          exMsg =
+            "Twitter APIの上限超過の可能性があります。1分程度後に再投稿して下さい。同じエラーが続く場合、認証情報を削除、再認証してください。"
+        }
+        if (res[0].message.includes("Status is a duplicate.")) {
+          exMsg = "連続で同じツイートはできません。"
+        }
         dispatch(
           logOperations.addLog({
             action: "Twitter の投稿に失敗",
-            detail:
-              e.message +
-              " Twitter APIの上限超過の可能性があります。1分程度後に再投稿して下さい。同じエラーが続く場合、認証情報を削除、再認証してください。",
+            detail: `${exMsg}:${e.message}`,
             noticeStatus: "error",
           })
         )
@@ -87,7 +142,7 @@ const postTweetRequest = (message: TweetText): AppThunkAction => {
 
       dispatch(
         logOperations.addLog({
-          action: "Twitter に投稿",
+          action: LogActionForSystem.POSTED_TO_TWITTER,
           detail: message,
           noticeStatus: "ok",
         })
@@ -133,7 +188,7 @@ const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
 
       dispatch(
         logOperations.addLog({
-          action: "YouTube Chat に投稿",
+          action: LogActionForSystem.POSTED_TO_YOU_TUBE,
           detail: message,
           noticeStatus: "ok",
         })

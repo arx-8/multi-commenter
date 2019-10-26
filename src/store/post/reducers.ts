@@ -4,6 +4,8 @@ import { isType } from "typescript-fsa"
 import * as actions from "./actions"
 
 export type State = Readonly<{
+  mainMessage: string
+  tweetSuffix: string
   ui: {
     postTweet: {
       isLoading: boolean
@@ -17,6 +19,8 @@ export type State = Readonly<{
 }>
 
 export const initialState: State = {
+  mainMessage: "",
+  tweetSuffix: "",
   ui: {
     postTweet: {
       isLoading: false,
@@ -33,6 +37,24 @@ export const reducer: Reducer<State, Action> = (
   state = initialState,
   action
 ) => {
+  /**
+   * mainMessage
+   */
+  if (isType(action, actions.onChangeMainMessage)) {
+    return produce(state, (draft) => {
+      draft.mainMessage = action.payload
+    })
+  }
+
+  /**
+   * tweetSuffix
+   */
+  if (isType(action, actions.onChangeTweetSuffix)) {
+    return produce(state, (draft) => {
+      draft.tweetSuffix = action.payload
+    })
+  }
+
   /**
    * postTweet
    */

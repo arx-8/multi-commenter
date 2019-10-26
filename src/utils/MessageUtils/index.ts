@@ -32,31 +32,6 @@ export const checkRemainingStatus = (remainingNum: number): RemainingStatus => {
   return "ok"
 }
 
-/**
- * メッセージの状態をチェックして、必要な情報を返す
- */
-export const checkMessageState = (
-  main: string,
-  suffix: string,
-  isReadyToPost: boolean
-): {
-  /** 投稿可能か？ */
-  isPostable: boolean
-  /**
-   * 入力可能な残り文字数
-   * この処理内で計算した値を返し再利用することで、計算量を減らす
-   */
-  remainingNum: number
-} => {
-  const remainingNum = countRemaining(concatAsTweet(main, suffix))
-  const isPostable = checkIsPostable(main, suffix, isReadyToPost, remainingNum)
-
-  return {
-    isPostable,
-    remainingNum,
-  }
-}
-
 const URL_PREFIX = /https?:\/\//
 
 /** Twitter API でエラーになるため、2行以上の空白行は NG */
@@ -65,16 +40,11 @@ const TOO_MANY_LINE_BREAK = /\n\n\n/
 /**
  * 投稿できる状態か？
  */
-const checkIsPostable = (
+export const checkIsPostable = (
   main: string,
   suffix: string,
-  isReadyToPost: boolean,
   remainingNum: number
 ): boolean => {
-  if (!isReadyToPost) {
-    return false
-  }
-
   // suffix はオプション・なくてもいいため、チェックしない
   // 空白・改行のみは NG
   if (main.trim().length === 0) {

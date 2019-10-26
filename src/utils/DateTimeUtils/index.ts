@@ -1,4 +1,4 @@
-import dayjs from "dayjs"
+import dayjs, { Dayjs } from "dayjs"
 import { Brand } from "src/types/Utils"
 
 export type UnixTime = Brand<number, "UnixTime">
@@ -9,8 +9,16 @@ export const getNow = (): UnixTime => {
   return (new Date().getTime() / 1000) as UnixTime
 }
 
+export const getNowAsDayjs = (): Dayjs => {
+  return dayjs()
+}
+
 const FORMAT = "YYYY-MM-DD HH:mm:ss.SSS"
 
 export const toDateTimeStr = (unixTime: UnixTime): DateTimeStr => {
   return dayjs(unixTime * 1000).format(FORMAT) as DateTimeStr
+}
+
+export const toDayjs = (dateTimeStr: DateTimeStr): Dayjs => {
+  return dayjs(dateTimeStr, FORMAT)
 }
