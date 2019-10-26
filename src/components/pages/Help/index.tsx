@@ -120,6 +120,14 @@ export const Help: React.FC<OwnProps> = () => {
             アカウントにアクセスできるサードパーティのサイトやアプリ
           </a>
         </Typography>
+
+        <div css={separator}></div>
+        <Typography variant="h6" gutterBottom>
+          4. 免責事項
+        </Typography>
+        <Typography variant="body1">
+          このアプリケーションによって生じた損害や損失等、一切の責任を負いかねます。
+        </Typography>
       </Content>
     </Fragment>
   )
