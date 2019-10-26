@@ -1,5 +1,6 @@
 import { HTTPError } from "ky"
 import { batch } from "react-redux"
+import { LogActionForSystem } from "src/constants/App"
 import {
   postLiveChatMessage,
   postRateLike,
@@ -14,6 +15,7 @@ import { TweetText, TwitterApiError } from "src/domain/models/Twitter"
 import { logOperations } from "src/store/log"
 import { AppThunkAction } from "src/types/ReduxTypes"
 import { FixMeAny } from "src/types/Utils"
+import { getNowAsDayjs, toDayjs } from "src/utils/DateTimeUtils"
 import { concatAsTweet } from "src/utils/MessageUtils"
 import * as actions from "./actions"
 
@@ -23,12 +25,60 @@ export const post = (): AppThunkAction => {
   return async (dispatch, getState) => {
     const state = getState().post
 
+    dispatch(preventRateLimitError())
+
     await Promise.all([
       dispatch(
         postTweetRequest(concatAsTweet(state.mainMessage, state.tweetSuffix))
       ),
       dispatch(postYouTubeLiveChatRequest(state.mainMessage)),
     ])
+  }
+}
+
+/**
+ * 連続投稿待ちに十分な時間
+ */
+const SUFFICIENT_SECOND_TO_WAIT_FOR_CONSECUTIVE_POSTS = 15
+
+/**
+ * レートリミットエラーに引っかかりうるような、過剰な連続投稿を阻止する
+ * @throws
+ */
+const preventRateLimitError = (): AppThunkAction<void> => {
+  return (dispatch, getState) => {
+    const { logs } = getState().log
+
+    const latestPostedLog = logs.find(
+      (l) =>
+        l.action === LogActionForSystem.POSTED_TO_TWITTER ||
+        l.action === LogActionForSystem.POSTED_TO_YOU_TUBE
+    )
+    if (!latestPostedLog) {
+      // 投稿履歴がなければ、投稿してよい
+      return
+    }
+
+    const diffSec = getNowAsDayjs().diff(
+      toDayjs(latestPostedLog.actionDateTime),
+      "second"
+    )
+
+    // 十分な投稿間隔が空いていれば、投稿してよい
+    const remainSec = SUFFICIENT_SECOND_TO_WAIT_FOR_CONSECUTIVE_POSTS - diffSec
+    if (remainSec <= 0) {
+      return
+    }
+
+    dispatch(
+      logOperations.addLog({
+        action: "投稿規制中",
+        detail: `あと ${remainSec} 秒後に投稿できるようになります。`,
+        noticeStatus: "warn",
+      })
+    )
+
+    throw new Error("Too Many Requests")
   }
 }
 
@@ -92,7 +142,7 @@ const postTweetRequest = (message: TweetText): AppThunkAction => {
 
       dispatch(
         logOperations.addLog({
-          action: "Twitter に投稿",
+          action: LogActionForSystem.POSTED_TO_TWITTER,
           detail: message,
           noticeStatus: "ok",
         })
@@ -138,7 +188,7 @@ const postYouTubeLiveChatRequest = (message: string): AppThunkAction => {
 
       dispatch(
         logOperations.addLog({
-          action: "YouTube Chat に投稿",
+          action: LogActionForSystem.POSTED_TO_YOU_TUBE,
           detail: message,
           noticeStatus: "ok",
         })

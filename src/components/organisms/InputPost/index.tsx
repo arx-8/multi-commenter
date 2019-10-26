@@ -124,10 +124,17 @@ export const InputPost: React.FC<OwnProps> = () => {
               variant="contained"
               color="primary"
               onClick={async () => {
-                await dispatch(postOperations.post())
+                try {
+                  await dispatch(postOperations.post())
 
-                // 初期化
-                setEditorState(EditorState.createEmpty())
+                  // 連続投稿阻止されなかった場合のみ初期化
+                  setEditorState(EditorState.createEmpty())
+
+                  // eslint-disable-next-line no-empty
+                } catch (error) {
+                  // NOP: ここに来る例外は、連続投稿阻止だけ
+                  // ログでユーザー通知しているため、ここでは何もしなくてよい
+                }
               }}
             >
               投稿
