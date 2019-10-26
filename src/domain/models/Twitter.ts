@@ -29,11 +29,25 @@ type AuthDenied = {
 export type TweetText = Brand<string, "TweetText">
 
 /**
- * リミットエラーなのか、本当にトークンの有効期限切れなのか、よくわからないエラー
+ * トークンが無効 or リミットエラー or アプリ BAN
  */
-export type TwitterApiInvalidOrExpiredTokenError = [
+type TwitterApiErrorOfInvalidOrExpiredToken = [
   {
     code: 89
     message: "Invalid or expired token."
   }
 ]
+
+/**
+ * 直近のツイートと完全一致する投稿はNG
+ */
+type TwitterApiErrorOfDuplicate = [
+  {
+    code: 187
+    message: "Status is a duplicate."
+  }
+]
+
+export type TwitterApiError = Partial<
+  TwitterApiErrorOfInvalidOrExpiredToken | TwitterApiErrorOfDuplicate
+>

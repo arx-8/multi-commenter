@@ -10,10 +10,7 @@ import {
   toSerializableErrorFromYouTubeAPIClientError,
 } from "src/domain/errors/SerializableError"
 import { extractVideoIdByURL } from "src/domain/models/Google"
-import {
-  TweetText,
-  TwitterApiInvalidOrExpiredTokenError,
-} from "src/domain/models/Twitter"
+import { TweetText, TwitterApiError } from "src/domain/models/Twitter"
 import { logOperations } from "src/store/log"
 import { AppThunkAction } from "src/types/ReduxTypes"
 import { FixMeAny } from "src/types/Utils"
@@ -48,23 +45,25 @@ const postTweetRequest = (message: TweetText): AppThunkAction => {
       const error: HTTPError = _error
       console.warn(error)
       const res:
-        | TwitterApiInvalidOrExpiredTokenError
+        | TwitterApiError
         | Record<string, FixMeAny> = await error.response.json()
 
       const e = toSerializableErrorByKyError(error, JSON.stringify(res))
 
-      // レートリミットエラー？の場合に、非常に不親切なエラーメッセージが返るため
-      if (
-        Array.isArray(res) &&
-        res.length === 1 &&
-        res[0].message.includes("Invalid or expired token.")
-      ) {
+      // TwitterAPI 公式のエラーメッセージだけだとわかりづらいため、詳細を補足
+      if (Array.isArray(res) && res.length === 1 && res[0] != null) {
+        let exMsg
+        if (res[0].message.includes("Invalid or expired token.")) {
+          exMsg =
+            "Twitter APIの上限超過の可能性があります。1分程度後に再投稿して下さい。同じエラーが続く場合、認証情報を削除、再認証してください。"
+        }
+        if (res[0].message.includes("Status is a duplicate.")) {
+          exMsg = "連続で同じツイートはできません。"
+        }
         dispatch(
           logOperations.addLog({
             action: "Twitter の投稿に失敗",
-            detail:
-              e.message +
-              " Twitter APIの上限超過の可能性があります。1分程度後に再投稿して下さい。同じエラーが続く場合、認証情報を削除、再認証してください。",
+            detail: `${exMsg}:${e.message}`,
             noticeStatus: "error",
           })
         )
