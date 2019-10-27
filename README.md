@@ -11,7 +11,7 @@
   - Twitter
   - YouTube Live chat
 
-## for Developer
+## For developer
 
 - This repository for Front-end of `multi-commenter`.
 - This app is deployed to [Netlify](https://docs.netlify.com/site-deploys/overview/).
