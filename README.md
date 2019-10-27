@@ -6,7 +6,7 @@
 
 ## Overview
 
-- Write once comment, Post to multiple SNS.
+- Write a comment once, Post to multiple SNS.
 - Supported sites:
   - Twitter
   - YouTube Live chat
